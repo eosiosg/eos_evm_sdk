@@ -1,6 +1,8 @@
 # eos_evm_sdk
 EOS EVM js client
 
+There are more debug logs in nodeos when open **--contract-console** and add **logging.json** in **config dir**
+
 ## 1. Construct EOSEVMClient
 ```js
 const EOSEVMClient  = require('./EOSEVMClient')
@@ -43,7 +45,7 @@ const api = new Api({ rpc, signatureProvider, textDecoder: new TextDecoder(), te
 
 
 ### 1. createETHAddress
-   * @method createETHAccount
+   * @method createETHAddress
    * @for  Eos_evm_sdk
    * @param {string} eos_account
    * @param {string} eth_address optional
@@ -90,39 +92,52 @@ account_eos_evm_a.createAddress('0xe327e755438fbdf9e60891d9b752da10a38514d1').th
    account_eosevm11111b_eos.withdraw('10.0000 EOS').then((res) => console.log(res))
    ```
    
-### getNonce
+### 5. getNonce
    * @method:
    * @for  Eos_evm_sdk
-   * retrive nonce from eos table
+   * retrive nonce from eos table for current account
    * */
    
    ```js
    account_eosevm11111b_eos.getNonce().then((res) => console.log(res))
    ```
    
-### getAccountInfoByETH
-
+### 6. getAccountInfoByETH
+   * @method getAccountInfoByETH
+   * @for  Eos_evm_sdk
+   * get account infomation by ETH address
+   * */
    ```js
    account_eosevm11111b_eos.getAccountInfoByETH().then((res) => console.log(res))
    ```
     
-### getAccountInfoByEOS
-
+### 7. getAccountInfoByEOS
+   * @method getAccountInfoByEOS
+   * @for  Eos_evm_sdk
+   * get account infomation by EOS account
+   * */
    ```js
    account_eosevm11111b_eos.getAccountInfoByEOS().then((res) => console.log(res))
    ```
-### getAssociateEOS
-
+### 8. getAssociateEOS
+   * @method getAssociateEOS
+   * @for  Eos_evm_sdk
+   * get associate EOS account in account infomation
+   * */
    ```js
    account_eosevm11111b_eos.getAssociateEOS().then((res) => console.log(res))
    ```
     
-### getBalance
+### 9. getBalance
+   * @method getBalance
+   * @for  Eos_evm_sdk
+   * get balance for current address
+   * */
    ```js
    account_eosevm11111b_eos.getBalance().then((res) => console.log(res))
    ```
     
-### setContract
+### 10. setContract
    * @method setContract
    * @for  Eos_evm_sdk
    * @param {array} args
@@ -132,33 +147,96 @@ account_eos_evm_a.createAddress('0xe327e755438fbdf9e60891d9b752da10a38514d1').th
    ```js
    account_eosevm11111b_eos.setContract([10000, 'first token', 4, 'SYS']).then((res) => console.log(res))
    ```
-### ERC20 wrapper
+### 11 ERC20 wrapper
 
-#### ERC20Transfer
-
+#### 11.1 ERC20Transfer
+   * @method ERC20Transfer
+   * @for  Eos_evm_sdk
+   * @param {string} to
+   * @param {string} value
+   * transfer from current account to **to** account
+   * */
    ```js
    account_eosevm11111b_raw_eth.ERC20Transfer('0x8c68f5c66628480dd2c2323a7c972fda099900cc', '0x1100')
    ```
     
-#### ERC20BalanceOf
+#### 11.2 ERC20BalanceOf
+   * @method ERC20BalanceOf
+   * @for  Eos_evm_sdk
+   * get balance of current account for current ERC20 contract address which locate in config
+   * */
 
    ```js
    account_eosevm11111b_raw_eth.ERC20BalanceOf().then((res) => console.log(res))
    ```
    
    
-#### ERC20TotalSupply
-
+#### 11.3 ERC20TotalSupply
+   * @method ERC20TotalSupply
+   * @for  Eos_evm_sdk
+   * get total supply for current ERC20 contract address which locate in config
+   * */
   ```js
   account_eosevm11111b_raw_eth.ERC20TotalSupply().then((res) => console.log(res))
   ```
 
+#### 11.4 ERC20Approve
+   * @method ERC20Approve
+   * @for  Eos_evm_sdk
+   * @param {string} spender
+   * @param {string} amount
+   * approve spender to cost amount value from owner
+   * */
+  ```js
+  account_eosevm11111b_raw_eth.ERC20Approve('0x39944247c2edf660d86d57764b58d83b8eee9014', '200').then((res) => console.log(res))
+  ```
 
+#### 11.5 ERC20Allowance
+   * @method ERC20Allowance
+   * @for  Eos_evm_sdk
+   * @param {string} spender
+   * get allowance for spender to cost amount value from owner
+   * */
+  ```js
+  account_eosevm11111b_raw_eth.ERC20Allowance('0x39944247c2edf660d86d57764b58d83b8eee9014').then((res) => console.log(res))
+  ```
     
-    
-    
-    
-    
+#### 11.6 ERC20TransferFrom
+   * @method ERC20TransferFrom
+   * @for  Eos_evm_sdk
+   * @param {string} to
+   * @param {string} value
+   * transfer from current account to **to** account, this method is used with **ERC20Approve** method
+   * */
+   ```js
+   account_eosevm11111b_raw_eth.ERC20TransferFrom('0x39944247c2edf660d86d57764b58d83b8eee9014', '100').then((res) => console.log(res))
+   ```
+  
+  
+### 12. sendAction
+   * @method sendAction
+   * @for  Eos_evm_sdk
+   * @param {string} method: function signature need to be send
+   * @param {array} args: function param need to be send
+   * @param {int} nonce: nonce, if = 0, it will retrive from EOSIO account table
+   * @param {int} value: transfer value amount wei, default 0
+   * @param {boolean} transfer: if true pure transfer, defalut false
+   * @param {boolean} ethSign: if true use ETH sign else use EOS signature
+   * @param {boolean} isCreateContract: is create contract, if create contract, type is CONTRACT_CREATE, else MESSAGE_CALL
+   * @param {string} gasPrice: hex string i.e: '0x09184e72a000', defalut config.defaultGasPrice
+   * @param {string} gasLimit: hex string i.e: '0x27100', default config.defaultGasLimit
+   * send raw transaction
+   * there are three types of sending raw transaction
+   * 1. create contract address
+   * 2. execute vm code for certain evm address
+   * 3. transfer balance
+   * */
+  ```js
+  account_eosevm11111b_raw_eth.sendAction(
+  'transferFrom',
+  ['0xe327e755438fbdf9e60891d9b752da10a38514d1', '0x39944247c2edf660d86d57764b58d83b8eee9014', '10']
+  )
+  ```
     
     
     
