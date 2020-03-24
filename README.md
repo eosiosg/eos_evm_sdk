@@ -47,7 +47,7 @@ const api = new Api({ rpc, signatureProvider, textDecoder: new TextDecoder(), te
    * @for  Eos_evm_sdk
    * @param {string} to
    * @param {string} value   
-   * transfer **to** account **value**
+   * native token transfer **to** account **value**
    * */
    ```js
    account_eosevm11111b_eos.transfer('0xd81f4358cb8cab53d005e7f47c7ba3f5116000a6', '1000')
@@ -169,28 +169,8 @@ const api = new Api({ rpc, signatureProvider, textDecoder: new TextDecoder(), te
    ```js
    account_eosevm11111b_raw_eth.ERC20Transfer('0x8c68f5c66628480dd2c2323a7c972fda099900cc', '0x1100')
    ```
-    
-#### 11.2 ERC20BalanceOf
-   * @method ERC20BalanceOf
-   * @for  Eos_evm_sdk
-   * get balance of current account for current ERC20 contract address which locate in config
-   * */
 
-   ```js
-   account_eosevm11111b_raw_eth.ERC20BalanceOf().then((res) => console.log(res))
-   ```
-   
-   
-#### 11.3 ERC20TotalSupply
-   * @method ERC20TotalSupply
-   * @for  Eos_evm_sdk
-   * get total supply for current ERC20 contract address which locate in config
-   * */
-  ```js
-  account_eosevm11111b_raw_eth.ERC20TotalSupply().then((res) => console.log(res))
-  ```
-
-#### 11.4 ERC20Approve
+#### 11.2 ERC20Approve
    * @method ERC20Approve
    * @for  Eos_evm_sdk
    * @param {string} spender
@@ -200,18 +180,8 @@ const api = new Api({ rpc, signatureProvider, textDecoder: new TextDecoder(), te
   ```js
   account_eosevm11111b_raw_eth.ERC20Approve('0x39944247c2edf660d86d57764b58d83b8eee9014', '200').then((res) => console.log(res))
   ```
-
-#### 11.5 ERC20Allowance
-   * @method ERC20Allowance
-   * @for  Eos_evm_sdk
-   * @param {string} spender
-   * get allowance for spender to cost amount value from owner
-   * */
-  ```js
-  account_eosevm11111b_raw_eth.ERC20Allowance('0x39944247c2edf660d86d57764b58d83b8eee9014').then((res) => console.log(res))
-  ```
     
-#### 11.6 ERC20TransferFrom
+#### 11.3 ERC20TransferFrom
    * @method ERC20TransferFrom
    * @for  Eos_evm_sdk
    * @param {string} to
