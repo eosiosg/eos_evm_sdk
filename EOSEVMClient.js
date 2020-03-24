@@ -76,12 +76,12 @@ class EOSEVMClient extends Eos_evm_sdk {
     return super.ERC20Approve(this.contract_dest, spender, amount, this.eth_address)
   }
 
-  async ERC20Allowance (owner, spender) {
-    return super.ERC20Allowance(this.contract_dest, owner, spender, this.eth_address)
+  async ERC20Allowance (spender) {
+    return super.ERC20Allowance(this.contract_dest, this.eth_address, spender, this.eth_address)
   }
 
-  async ERC20TranferFrom (from, to, value) {
-    return super.ERC20TranferFrom(this.contract_dest, from, to, value, this.eth_address)
+  async ERC20TransferFrom (to, value) {
+    return super.ERC20TransferFrom(this.contract_dest, this.eth_address, to, value, this.eth_address)
   }
 
   async sendAction (   method,

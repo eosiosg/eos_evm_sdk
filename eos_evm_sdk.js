@@ -445,7 +445,7 @@ class Eos_evm_sdk {
     )
   }
 
-  async ERC20TranferFrom (contract, from, to, value, sender) {
+  async ERC20TransferFrom (contract, from, to, value, sender) {
     return await this.sendRawAction(
       contract,
       'transferFrom',
