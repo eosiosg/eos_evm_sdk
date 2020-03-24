@@ -1,0 +1,26 @@
+{
+  "dependencies": {
+    "eosjs": "^20.0.3",
+    "node-fetch": "^2.6.0",
+    "util": "^0.12.2",
+    "web3": "^1.2.6"
+  },
+  "name": "eos_evm_sdk",
+  "version": "1.0.0",
+  "description": " EOS EVM SDK",
+  "main": "test.js",
+  "devDependencies": {},
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eosiosg/eos_evm_sdk.git"
+  },
+  "author": "Frank",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/eosiosg/eos_evm_sdk/issues"
+  },
+  "homepage": "https://github.com/eosiosg/eos_evm_sdk#readme"
+}
