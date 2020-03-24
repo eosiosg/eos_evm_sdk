@@ -42,7 +42,17 @@ const api = new Api({ rpc, signatureProvider, textDecoder: new TextDecoder(), te
   
   let account_eos_evm_a = new EOSEVMClient(rpc, api, config, 'eosevm11111d', '', '')
 ```
-
+### 0. transfer
+   * @method transfer
+   * @for  Eos_evm_sdk
+   * @param {string} to
+   * @param {string} value   
+   * transfer **to** account **value**
+   * */
+   ```js
+   account_eosevm11111b_eos.transfer('0xd81f4358cb8cab53d005e7f47c7ba3f5116000a6', '1000')
+   ```
+   
 
 ### 1. createETHAddress
    * @method createETHAddress
@@ -55,10 +65,10 @@ const api = new Api({ rpc, signatureProvider, textDecoder: new TextDecoder(), te
    * 2. create ETH account, second param string must be native ETH address which user own the private key
    * */
 
-```js
-let account_eos_evm_a = new EOSEVMClient(rpc, api, config, 'eosevm11111d', '', '')
-account_eos_evm_a.createAddress('0xe327e755438fbdf9e60891d9b752da10a38514d1').then((res) => console.log(res))
-```
+  ```js
+  let account_eos_evm_a = new EOSEVMClient(rpc, api, config, 'eosevm11111d', '', '')
+  account_eos_evm_a.createAddress('0xe327e755438fbdf9e60891d9b752da10a38514d1').then((res) => console.log(res))
+  ```
 
 ### 2. linkToken
    * @method linkToken
@@ -220,7 +230,7 @@ account_eos_evm_a.createAddress('0xe327e755438fbdf9e60891d9b752da10a38514d1').th
    * @param {array} args: function param need to be send
    * @param {int} nonce: nonce, if = 0, it will retrive from EOSIO account table
    * @param {int} value: transfer value amount wei, default 0
-   * @param {boolean} transfer: if true pure transfer, defalut false
+   * @param {boolean} transfer: if true native transfer, defalut false
    * @param {boolean} ethSign: if true use ETH sign else use EOS signature
    * @param {boolean} isCreateContract: is create contract, if create contract, type is CONTRACT_CREATE, else MESSAGE_CALL
    * @param {string} gasPrice: hex string i.e: '0x09184e72a000', defalut config.defaultGasPrice
@@ -229,7 +239,6 @@ account_eos_evm_a.createAddress('0xe327e755438fbdf9e60891d9b752da10a38514d1').th
    * there are three types of sending raw transaction
    * 1. create contract address
    * 2. execute vm code for certain evm address
-   * 3. transfer balance
    * */
   ```js
   account_eosevm11111b_raw_eth.sendAction(
