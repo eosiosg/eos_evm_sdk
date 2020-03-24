@@ -31,6 +31,10 @@ class EOSEVMClient extends Eos_evm_sdk {
     return super.getSenderNonce(this.eth_address)
   }
 
+  async getAllAccounts () {
+    return super.getAllAccounts()
+  }
+
   async getAccountInfoByETH () {
     return super.getAccountByETH(this.eth_address)
   }
@@ -44,7 +48,7 @@ class EOSEVMClient extends Eos_evm_sdk {
   }
 
 
-  async getBalance() {
+  async getBalance () {
     return super.getBalanceByETH(this.eth_address)
   }
 
@@ -84,16 +88,35 @@ class EOSEVMClient extends Eos_evm_sdk {
     return super.ERC20TransferFrom(this.contract_dest, this.eth_address, to, value, this.eth_address)
   }
 
-  async sendAction (   method,
-                       args,
-                       nonce = 0,
-                       value = 0,
-                       transfer = false,
-                       ethSign = true,
-                       isCreateContract = false,
-                       gasPrice = this.config.defaultGasPrice,
-                       gasLimit = this.config.defaultGasLimit) {
-    return super.sendRawAction(this.contract_dest, method, args, this.eth_address, nonce, value, transfer, ethSign, isCreateContract, gasPrice, gasLimit)
+  async call (method,
+              args,
+              nonce = 0,
+              value = 0,
+              ethSign = true,
+              gasPrice = this.config.defaultGasPrice,
+              gasLimit = this.config.defaultGasLimit) {
+    return super.sendRawAction(this.contract_dest, method, args, this.eth_address, nonce, value, false, ethSign, gasPrice, gasLimit)
+  }
+
+  async createContract (args,
+                        nonce = 0,
+                        value = 0,
+                        ethSign = true,
+                        gasPrice = this.config.defaultGasPrice,
+                        gasLimit = this.config.defaultGasLimit
+  ) {
+    return super.sendRawAction('', '', args, this.eth_address, nonce, value, false, ethSign, gasPrice, gasLimit)
+  }
+
+  async sendAction (method,
+                    args,
+                    nonce = 0,
+                    value = 0,
+                    transfer = false,
+                    ethSign = true,
+                    gasPrice = this.config.defaultGasPrice,
+                    gasLimit = this.config.defaultGasLimit) {
+    return super.sendRawAction(this.contract_dest, method, args, this.eth_address, nonce, value, transfer, ethSign, gasPrice, gasLimit)
   }
 }
 

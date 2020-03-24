@@ -201,6 +201,20 @@ class Eos_evm_sdk {
     return accountInfo.rows[0].nonce
   }
 
+  async getAllAccounts () {
+    const accountList = await this.rpc.get_table_rows({
+      json: true,               // Get the response as json
+      code: this.config.contract,      // Contract that we target
+      scope: this.config.contract,         // Account that owns the data
+      table: 'account',        // Table name
+      limit: 100,                // Maximum number of rows that we want to get
+      reverse: false,           // Optional: Get reversed data
+      show_payer: false          // Optional: Show ram payer
+    })
+
+    return accountList.rows
+  }
+
   async getAccountByETH (sender) {
     sender = sender.slice(0, 2) === '0x' ? sender.slice(2) : sender
     const accountInfo = await this.rpc.get_table_rows({
@@ -380,7 +394,7 @@ class Eos_evm_sdk {
    * @param {string} contract: ERC20 contract address
    * @param {string} from: eth address
    * @param {string} to: eth address
-   * @param {string} amount
+   * @param {int} amount
    * */
   async ERC20Transfer (contract, from, to, amount) {
     return await this.sendRawAction(
@@ -461,7 +475,6 @@ class Eos_evm_sdk {
    * @param {string} gasPrice: hex string i.e: '0x09184e72a000'
    * @param {string} gasLimit: hex string i.e: '0x27100'
    * @param {int} value: transfer value amount wei
-   * @param {boolean} isCreateContract: is create contract
    * @param {string} method: function signature need to be send
    * @param {array} args: function param need to be send
    * @param {string} sender: transactor, optional field
@@ -482,7 +495,6 @@ class Eos_evm_sdk {
                        value = 0,
                        transfer = false,
                        ethSign = true,
-                       isCreateContract = false,
                        gasPrice = this.config.defaultGasPrice,
                        gasLimit = this.config.defaultGasLimit
   ) {
@@ -494,8 +506,9 @@ class Eos_evm_sdk {
 
     let privateKey = Buffer.from(senderPrivateKey, 'hex',)
 
-    // let nonce = accountInfo.nonce
-    nonce = nonce === 0 ? await this.getSenderNonce(sender.substring(2, sender.length)) : nonce
+    const nonce_hex = nonce === 0 ? `0x${await this.getSenderNonce(sender.slice(2))}` : `0x${nonce.toString(16)}`
+
+    const isCreateContract = to === ''
 
     // 1. Message Call encode method ID and type check
     let encodedData = ''
@@ -513,19 +526,20 @@ class Eos_evm_sdk {
       const constructor_params_encode = web3.eth.abi.encodeParameters(abi_entry.inputs, args).slice(2)
 
       encodedData = this.source.object + constructor_params_encode
+      to = '0x'
     }
 
     let txParams = {
-      nonce: nonce.toString().slice(0, 2) === '0x' ? nonce.toString() : '0x' + nonce.toString(),
-      gasPrice: gasPrice,
-      gasLimit: gasLimit,
-      to: to.slice(0, 2) === '0x' ? to : '0x' + to,
-      value: value.toString().slice(0, 2) === '0x' ? value : '0x' + value.toString(),
+      nonce: nonce_hex,
+      gasPrice: gasPrice === this.config.defaultGasPrice ? this.config.defaultGasPrice : `0x${parseInt(gasPrice, 10).toString(16)}`,
+      gasLimit: gasLimit === this.config.defaultGasLimit ? this.config.defaultGasLimit : `0x${parseInt(gasLimit, 10).toString(16)}`,
+      to: (to.slice(0, 2) === '0x' ? to : '0x' + to),
+      value: `0x${value.toString(16)}`,
       data: encodedData.slice(0, 2) === '0x' ? encodedData : '0x' + encodedData,
     }
 
     // The second parameter is not necessary if these values are used
-    let tx = new EthereumTx(txParams, { chain: 'mainnet', hardfork: 'petersburg' })
+    let tx = new EthereumTx(txParams, { chain: 'mainnet', hardfork: 'istanbul' })
 
     if (ethSign) {
       tx.sign(privateKey)
