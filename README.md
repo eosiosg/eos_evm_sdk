@@ -203,8 +203,8 @@ const api = new Api({ rpc, signatureProvider, textDecoder: new TextDecoder(), te
    * @param {boolean} transfer: if true native transfer, defalut false
    * @param {boolean} ethSign: if true use ETH sign else use EOS signature
    * @param {boolean} isCreateContract: is create contract, if create contract, type is CONTRACT_CREATE, else MESSAGE_CALL
-   * @param {string} gasPrice: hex string i.e: '0x09184e72a000', defalut config.defaultGasPrice
-   * @param {string} gasLimit: hex string i.e: '0x27100', default config.defaultGasLimit
+   * @param {string} gasPrice: defalut config.defaultGasPrice
+   * @param {string} gasLimit: default config.defaultGasLimit
    * send raw transaction
    * there are three types of sending raw transaction
    * 1. create contract address
