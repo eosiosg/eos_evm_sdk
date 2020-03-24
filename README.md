@@ -3,7 +3,7 @@ EOS EVM js client
 
 There are more debug logs in nodeos when open **--contract-console** and add **logging.json** in **config dir**
 
-## 1. Construct EOSEVMClient
+## Construct EOSEVMClient
 ```js
 const EOSEVMClient  = require('./EOSEVMClient')
 
@@ -46,11 +46,11 @@ const api = new Api({ rpc, signatureProvider, textDecoder: new TextDecoder(), te
    * @method transfer
    * @for  Eos_evm_sdk
    * @param {string} to
-   * @param {string} value   
+   * @param {int} value   
    * native token transfer **to** account **value**
    * */
    ```js
-   account_eosevm11111b_eos.transfer('0xd81f4358cb8cab53d005e7f47c7ba3f5116000a6', '1000')
+   account_eosevm11111b_eos.transfer('0xd81f4358cb8cab53d005e7f47c7ba3f5116000a6', 1000)
    ```
    
 
@@ -103,13 +103,22 @@ const api = new Api({ rpc, signatureProvider, textDecoder: new TextDecoder(), te
    ```
    
 ### 5. getNonce
-   * @method:
+   * @method: getNonce
    * @for  Eos_evm_sdk
    * retrive nonce from eos table for current account
    * */
    
    ```js
    account_eosevm11111b_eos.getNonce().then((res) => console.log(res))
+   ```
+### 6. getAllAccounts
+   * @method: getAllAccounts
+   * @for  Eos_evm_sdk
+   * get all accounts in table limit 100
+   * */
+   
+   ```js
+   account_eosevm11111b_eos.getAllAccounts().then((res) => console.log(res))
    ```
    
 ### 6. getAccountInfoByETH
@@ -151,7 +160,6 @@ const api = new Api({ rpc, signatureProvider, textDecoder: new TextDecoder(), te
    * @method setContract
    * @for  Eos_evm_sdk
    * @param {array} args
-   * @param {string} quantity
    * set contract in current address
    * */
    ```js
@@ -163,33 +171,33 @@ const api = new Api({ rpc, signatureProvider, textDecoder: new TextDecoder(), te
    * @method ERC20Transfer
    * @for  Eos_evm_sdk
    * @param {string} to
-   * @param {string} value
+   * @param {int} value
    * transfer from current account to **to** account
    * */
    ```js
-   account_eosevm11111b_raw_eth.ERC20Transfer('0x8c68f5c66628480dd2c2323a7c972fda099900cc', '0x1100')
+   account_eosevm11111b_raw_eth.ERC20Transfer('0x8c68f5c66628480dd2c2323a7c972fda099900cc', 110)
    ```
 
 #### 11.2 ERC20Approve
    * @method ERC20Approve
    * @for  Eos_evm_sdk
    * @param {string} spender
-   * @param {string} amount
+   * @param {int} amount
    * approve spender to cost amount value from owner
    * */
   ```js
-  account_eosevm11111b_raw_eth.ERC20Approve('0x39944247c2edf660d86d57764b58d83b8eee9014', '200').then((res) => console.log(res))
+  account_eosevm11111b_raw_eth.ERC20Approve('0x39944247c2edf660d86d57764b58d83b8eee9014', 200).then((res) => console.log(res))
   ```
     
 #### 11.3 ERC20TransferFrom
    * @method ERC20TransferFrom
    * @for  Eos_evm_sdk
    * @param {string} to
-   * @param {string} value
+   * @param {int} value
    * transfer from current account to **to** account, this method is used with **ERC20Approve** method
    * */
    ```js
-   account_eosevm11111b_raw_eth.ERC20TransferFrom('0x39944247c2edf660d86d57764b58d83b8eee9014', '100').then((res) => console.log(res))
+   account_eosevm11111b_raw_eth.ERC20TransferFrom('0x39944247c2edf660d86d57764b58d83b8eee9014', 100).then((res) => console.log(res))
    ```
   
   
@@ -202,9 +210,8 @@ const api = new Api({ rpc, signatureProvider, textDecoder: new TextDecoder(), te
    * @param {int} value: transfer value amount wei, default 0
    * @param {boolean} transfer: if true native transfer, defalut false
    * @param {boolean} ethSign: if true use ETH sign else use EOS signature
-   * @param {boolean} isCreateContract: is create contract, if create contract, type is CONTRACT_CREATE, else MESSAGE_CALL
-   * @param {string} gasPrice: defalut config.defaultGasPrice
-   * @param {string} gasLimit: default config.defaultGasLimit
+   * @param {int} gasPrice: defalut config.defaultGasPrice
+   * @param {int} gasLimit: default config.defaultGasLimit
    * send raw transaction
    * there are three types of sending raw transaction
    * 1. create contract address
@@ -213,7 +220,7 @@ const api = new Api({ rpc, signatureProvider, textDecoder: new TextDecoder(), te
   ```js
   account_eosevm11111b_raw_eth.sendAction(
   'transferFrom',
-  ['0xe327e755438fbdf9e60891d9b752da10a38514d1', '0x39944247c2edf660d86d57764b58d83b8eee9014', '10']
+  ['0xe327e755438fbdf9e60891d9b752da10a38514d1', '0x39944247c2edf660d86d57764b58d83b8eee9014', 10]
   )
   ```
     
