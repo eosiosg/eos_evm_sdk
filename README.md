@@ -139,6 +139,7 @@ const api = new Api({ rpc, signatureProvider, textDecoder: new TextDecoder(), te
    ```js
    account_eosevm11111b_eos.getAccountInfoByEOS().then((res) => console.log(res))
    ```
+   
 ### 9. getAssociateEOS
    * @method getAssociateEOS
    * @for  Eos_evm_sdk
