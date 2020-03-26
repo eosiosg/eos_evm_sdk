@@ -456,7 +456,7 @@ class Eos_evm_sdk {
    * @param {int} nonce: nonce
    * @param {boolean} ethSign: if true use ETH sign else use EOS signature
    * @param {boolean} transfer: if true pure transfer
-   * @param {boolean} simulate: if true simulate action
+   * @param {boolean} simulate: whether this is a simulated action. If simulate is true, the transaction is forced to fail after execution; if simulate is false, the transaction is executed as it should be.
    * send raw transaction
    * there are three types of sending raw transaction
    * 1. create contract address

@@ -76,7 +76,7 @@ class EOSEVMClient extends Eos_evm_sdk {
    * @for  Eos_evm_sdk
    * @param {string} to: eth address
    * @param {int} amount
-   * @param {boolean} simulate
+   * @param {boolean} simulate: whether this is a simulated action. If simulate is true, the transaction is forced to fail after execution; if simulate is false, the transaction is executed as it should be.
    * */
   async ERC20Transfer (to, amount, simulate = false) {
     try {
@@ -88,7 +88,7 @@ class EOSEVMClient extends Eos_evm_sdk {
         return res.processed.action_traces[0].console
       })
     } catch (e) {
-      console.log('\nCaught exception: ' + e)
+      console.log('\nTransaction Execution failed: Caught exception: ' + e)
       if (e instanceof RpcError) {
         let pending_size = "pending console output: ".length
         return e.json.error.details[1].message.slice(pending_size)
@@ -99,7 +99,7 @@ class EOSEVMClient extends Eos_evm_sdk {
   /** Simple wrapper for ERC20
    * @method ERC20BalanceOf: get current address balance
    * @for  Eos_evm_sdk
-   * @param {boolean} simulate
+   * @param {boolean} simulate: whether this is a simulated action. If simulate is true, the transaction is forced to fail after execution; if simulate is false, the transaction is executed as it should be.
    * */
   async ERC20BalanceOf (simulate = true) {
     try {
@@ -111,7 +111,7 @@ class EOSEVMClient extends Eos_evm_sdk {
         return res.processed.action_traces[0].console
       })
     } catch (e) {
-      console.log('\nCaught exception: ' + e)
+      console.log('\nTransaction Execution failed: Caught exception: ' + e)
 
       if (e instanceof RpcError) {
         let pending_size = "pending console output: ".length
@@ -125,7 +125,7 @@ class EOSEVMClient extends Eos_evm_sdk {
   /** Simple wrapper for ERC20
    * @method ERC20TotalSupply: get current total supply
    * @for  Eos_evm_sdk
-   * @param {boolean} simulate
+   * @param {boolean} simulate: whether this is a simulated action. If simulate is true, the transaction is forced to fail after execution; if simulate is false, the transaction is executed as it should be.
    * */
   async ERC20TotalSupply (simulate = true) {
     try {
@@ -137,7 +137,7 @@ class EOSEVMClient extends Eos_evm_sdk {
         return web3.utils.hexToNumber(`0x${res.processed.action_traces[0].console.output}`)
       })
     } catch (e) {
-      console.log('\nCaught exception: ' + e)
+      console.log('\nTransaction Execution failed: Caught exception: ' + e)
       if (e instanceof RpcError) {
         let pending_size = "pending console output: ".length
         let json_response = e.json.error.details[1].message.slice(pending_size)
@@ -157,7 +157,7 @@ class EOSEVMClient extends Eos_evm_sdk {
         return res.processed.action_traces[0].console
       })
     } catch (e) {
-      console.log('\nCaught exception: ' + e)
+      console.log('\nTransaction Execution failed: Caught exception: ' + e)
       if (e instanceof RpcError) {
         let pending_size = "pending console output: ".length
         let json_response = e.json.error.details[1].message.slice(pending_size)
@@ -177,7 +177,7 @@ class EOSEVMClient extends Eos_evm_sdk {
         return res.processed.action_traces[0].console
       })
     } catch (e) {
-      console.log('\nCaught exception: ' + e)
+      console.log('\nTransaction Execution failed: Caught exception: ' + e)
       if (e instanceof RpcError) {
         let pending_size = "pending console output: ".length
         let json_response = e.json.error.details[1].message.slice(pending_size)
@@ -197,7 +197,7 @@ class EOSEVMClient extends Eos_evm_sdk {
         return res.processed.action_traces[0].console
       })
     } catch (e) {
-      console.log('\nCaught exception: ' + e)
+      console.log('\nTransaction Execution failed: Caught exception: ' + e)
       if (e instanceof RpcError) {
         let pending_size = "pending console output: ".length
         return e.json.error.details[1].message.slice(pending_size)
@@ -215,7 +215,7 @@ class EOSEVMClient extends Eos_evm_sdk {
         return res.processed.action_traces[0].console
       })
     } catch (e) {
-      console.log('\nCaught exception: ' + e)
+      console.log('\nTransaction Execution failed: Caught exception: ' + e)
       if (e instanceof RpcError) {
         let pending_size = "pending console output: ".length
         let json_response = e.json.error.details[1].message.slice(pending_size)
@@ -235,7 +235,7 @@ class EOSEVMClient extends Eos_evm_sdk {
         return res.processed.action_traces[0].console
       })
     } catch (e) {
-      console.log('\nCaught exception: ' + e)
+      console.log('\nTransaction Execution failed: Caught exception: ' + e)
       if (e instanceof RpcError) {
         let pending_size = "pending console output: ".length
         return e.json.error.details[1].message.slice(pending_size)
