@@ -290,7 +290,6 @@ class Eos_evm_sdk {
           }],
           data: {
             "trx_code": trxCode,
-            // "sender": sender
           },
         }]
       }, {
@@ -299,6 +298,29 @@ class Eos_evm_sdk {
       })
     } catch (e) {
       return e
+    }
+  }
+
+  async sendSimulateEOSActionWithETHSIG (trxCode) {
+    try {
+      return await this.api.transact({
+        actions: [{
+          account: this.config.contract,
+          name: 'simulate',
+          authorization: [{
+            actor: this.config.worker,
+            permission: 'active',
+          }],
+          data: {
+            "trx_code": trxCode,
+          },
+        }]
+      }, {
+        blocksBehind: 3,
+        expireSeconds: 30,
+      })
+    } catch (e) {
+      throw e
     }
   }
 
@@ -327,11 +349,32 @@ class Eos_evm_sdk {
     }
   }
 
-  async transfer (from, to, value) {
-    let accountInfo = await this.getAccountByETH(from)
-    let useETHSign = accountInfo.eosio_account === ""
-
-    return await this.sendRawAction(to, '', [], from, 0, value, true, useETHSign)
+  async sendSimulateEOSActionWithEOSSIG (trxCode, eth_sender, eos_sender) {
+    try {
+      eth_sender = eth_sender.slice(0, 2) === '0x' ? eth_sender.slice(2) : eth_sender
+      return await this.api.transact({
+        actions: [{
+          account: this.config.contract,
+          name: 'simulate',
+          authorization: [{
+            actor: eos_sender,
+            permission: 'active',
+          }],
+          data: {
+            "trx_code": trxCode,
+            "sender": eth_sender
+          },
+        }]
+      }, {
+        blocksBehind: 3,
+        expireSeconds: 30,
+      })
+    } catch (e) {
+      console.log('\nCaught exception: ' + e);
+      if (e instanceof RpcError)
+        console.log(e.json);
+      // console.log(JSON.stringify(e.json, null, 2));
+    }
   }
 
   async getBalanceByEOS (eos_account) {
@@ -380,92 +423,24 @@ class Eos_evm_sdk {
    * @for  Eos_evm_sdk
    * @param {string} sender: transactor
    * @param {array} args: abi constructor array list i.e. [10000, 'first token', 4, 'SYS']
+   * @param {boolean} simulate: if true simulate action
+   * @param {boolean} ethSign: if true use ETH signature
    * @param {int} value: i.e: '27100'
    * @param {int} nonce
    * */
-  async deployContract (sender, args, value = 0, nonce = 0) {
-    return await this.sendRawAction('', '', args, sender, nonce, value, true, true)
-  }
-
-
-  /** Simple wrapper for ERC20
-   * @method ERC20Transfer
-   * @for  Eos_evm_sdk
-   * @param {string} contract: ERC20 contract address
-   * @param {string} from: eth address
-   * @param {string} to: eth address
-   * @param {int} amount
-   * */
-  async ERC20Transfer (contract, from, to, amount) {
-    return await this.sendRawAction(
-      contract,
-      'transfer',
-      [to, amount],
-      from
-    )
-  }
-
-  async ERC20BalanceOf (contract, sender) {
-    return await this.sendRawAction(
-      contract,
-      'balanceOf',
-      [sender],
-      sender
-    )
-  }
-
-  async ERC20TotalSupply (contract, sender) {
-    return await this.sendRawAction(
-      contract,
-      'totalSupply',
-      [],
-      sender
-    )
-  }
-
-  async ERC20Symbol (contract, sender) {
-    return await this.sendRawAction(
-      contract,
-      'symbol',
-      [],
-      sender
-    )
-  }
-
-  async ERC20Decimals (contract, sender) {
-    return await this.sendRawAction(
-      contract,
-      'decimals',
-      [],
-      sender
-    )
-  }
-
-  async ERC20Approve (contract, spender, amount, sender) {
-    return await this.sendRawAction(
-      contract,
-      'approve',
-      [spender, amount],
-      sender
-    )
-  }
-
-  async ERC20Allowance (contract, owner, spender, sender) {
-    return await this.sendRawAction(
-      contract,
-      'allowance',
-      [owner, spender],
-      sender
-    )
-  }
-
-  async ERC20TransferFrom (contract, from, to, value, sender) {
-    return await this.sendRawAction(
-      contract,
-      'transferFrom',
-      [from, to, value],
-      sender
-    )
+  async deployContract (sender, args, simulate=false, value = 0, nonce = 0, ethSign=true) {
+    const actionParams = {
+      to: '',
+      method : '',
+      args: args,
+      sender: this.eth_address,
+      simulate: simulate,
+      nonce: nonce,
+      value: value,
+      transfer: false,
+      ethSign: ethSign,
+    }
+    return await this.sendRawAction(...actionParams)
   }
 
   /** sendRawAction
@@ -481,6 +456,7 @@ class Eos_evm_sdk {
    * @param {int} nonce: nonce
    * @param {boolean} ethSign: if true use ETH sign else use EOS signature
    * @param {boolean} transfer: if true pure transfer
+   * @param {boolean} simulate: if true simulate action
    * send raw transaction
    * there are three types of sending raw transaction
    * 1. create contract address
@@ -491,6 +467,7 @@ class Eos_evm_sdk {
                        method,
                        args,
                        sender,
+                       simulate = false,
                        nonce = 0,
                        value = 0,
                        transfer = false,
@@ -545,16 +522,26 @@ class Eos_evm_sdk {
       tx.sign(privateKey)
     }
     let serializedTx = await tx.serialize().toString('hex')
-    console.log(`serilized tx: ${serializedTx}`)
+    console.log(`serialized tx: ${serializedTx}`)
 
     let result
     // send eos transaction
-    if (ethSign) {
-      result = await this.sendRawEOSActionWithETHSIG(serializedTx)
-    } else {
-      let eos_sender = await this.getAssociateEOSByETH(sender)
-      result = await this.sendRawEOSActionWithEOSSIG(serializedTx, sender, eos_sender)
+    if (!simulate) {
+      if (ethSign) {
+        result = await this.sendRawEOSActionWithETHSIG(serializedTx)
+      } else {
+        let eos_sender = await this.getAssociateEOSByETH(sender)
+        result = await this.sendRawEOSActionWithEOSSIG(serializedTx, sender, eos_sender)
+      }
+    } else  {
+      if (ethSign) {
+        result = await this.sendSimulateEOSActionWithETHSIG(serializedTx)
+      } else {
+        let eos_sender = await this.getAssociateEOSByETH(sender)
+        result = await this.sendSimulateEOSActionWithEOSSIG(serializedTx, sender, eos_sender)
+      }
     }
+
     return result
   }
 }
