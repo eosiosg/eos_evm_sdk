@@ -108,9 +108,9 @@ async function main () {
   await account_eosevm11111b_eos.transfer('0xd81f4358cb8cab53d005e7f47c7ba3f5116000a6', 1000000).then((res) => console.log(res))
   await account_eosevm11111b_eos.getBalance().then((balance) => console.log(`balance: ${balance}`))
   await account_eosevm11111b_raw_eth.transfer('0x39944247c2edf660d86d57764b58d83b8eee9014', 20).then((res) => console.log(res))
-  await account_eosevm11111b_raw_eth.ERC20TotalSupply(false).then((res) => console.log(res))
+  await account_eosevm11111b_raw_eth.ERC20TotalSupply().then((res) => console.log(res))
   await account_eosevm11111b_raw_eth.ERC20Symbol().then((res) => console.log(res))
-  await account_eosevm11111b_raw_eth.ERC20Transfer('0x46051cfbfd3453f72565818a6b3e0a155a804330', 1, false).then(
+  await account_eosevm11111b_raw_eth.ERC20Transfer('0x46051cfbfd3453f72565818a6b3e0a155a804330', 1).then(
     res => console.log(res)
   )
   await account_eosevm11111b_raw_eth.ERC20BalanceOf().then(res => console.log(res))

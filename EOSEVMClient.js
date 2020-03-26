@@ -67,23 +67,18 @@ class EOSEVMClient extends Eos_evm_sdk {
     return super.getBalanceByETH(this.eth_address)
   }
 
-  async setContract (args, value = 0, nonce = 0) {
-    return super.deployContract(this.eth_address, args, value, nonce)
-  }
-
   /** Simple wrapper for ERC20
    * @method ERC20Transfer
    * @for  Eos_evm_sdk
    * @param {string} to: eth address
    * @param {int} amount
-   * @param {boolean} simulate: whether this is a simulated action. If simulate is true, the transaction is forced to fail after execution; if simulate is false, the transaction is executed as it should be.
    * */
-  async ERC20Transfer (to, amount, simulate = false) {
+  async ERC20Transfer (to, amount) {
     try {
       return await this.call(
         'transfer',
         [to, amount],
-        simulate
+        false
       ).then(res => {
         return res.processed.action_traces[0].console
       })
@@ -99,14 +94,13 @@ class EOSEVMClient extends Eos_evm_sdk {
   /** Simple wrapper for ERC20
    * @method ERC20BalanceOf: get current address balance
    * @for  Eos_evm_sdk
-   * @param {boolean} simulate: whether this is a simulated action. If simulate is true, the transaction is forced to fail after execution; if simulate is false, the transaction is executed as it should be.
    * */
-  async ERC20BalanceOf (simulate = true) {
+  async ERC20BalanceOf () {
     try {
       return await this.call(
         'balanceOf',
         [this.eth_address],
-        simulate
+        true
       ).then(res => {
         return res.processed.action_traces[0].console
       })
@@ -125,14 +119,13 @@ class EOSEVMClient extends Eos_evm_sdk {
   /** Simple wrapper for ERC20
    * @method ERC20TotalSupply: get current total supply
    * @for  Eos_evm_sdk
-   * @param {boolean} simulate: whether this is a simulated action. If simulate is true, the transaction is forced to fail after execution; if simulate is false, the transaction is executed as it should be.
    * */
-  async ERC20TotalSupply (simulate = true) {
+  async ERC20TotalSupply () {
     try {
       return await this.call(
         'totalSupply',
         [],
-        simulate
+        true
       ).then(res => {
         return web3.utils.hexToNumber(`0x${res.processed.action_traces[0].console.output}`)
       })
@@ -147,12 +140,12 @@ class EOSEVMClient extends Eos_evm_sdk {
     }
   }
 
-  async ERC20Symbol (simulate = true) {
+  async ERC20Symbol () {
     try {
       return await this.call(
         'symbol',
         [],
-        simulate
+        true
       ).then(res => {
         return res.processed.action_traces[0].console
       })
@@ -167,12 +160,12 @@ class EOSEVMClient extends Eos_evm_sdk {
     }
   }
 
-  async ERC20Decimals (simulate = true) {
+  async ERC20Decimals () {
     try {
       return await this.call(
         'decimals',
         [],
-        simulate
+        true
       ).then(res => {
         return res.processed.action_traces[0].console
       })
@@ -187,12 +180,12 @@ class EOSEVMClient extends Eos_evm_sdk {
     }
   }
 
-  async ERC20Approve (spender, amount, simulate = false) {
+  async ERC20Approve (spender, amount) {
     try {
       return await this.call(
         'approve',
         [spender, amount],
-        simulate
+        false
       ).then(res => {
         return res.processed.action_traces[0].console
       })
@@ -205,12 +198,12 @@ class EOSEVMClient extends Eos_evm_sdk {
     }
   }
 
-  async ERC20Allowance (spender, simulate = true) {
+  async ERC20Allowance (spender) {
     try {
       return await this.call(
         'allowance',
         [this.eth_address, spender],
-        simulate
+        true
       ).then(res => {
         return res.processed.action_traces[0].console
       })
@@ -225,12 +218,12 @@ class EOSEVMClient extends Eos_evm_sdk {
     }
   }
 
-  async ERC20TransferFrom (to, value, simulate = false) {
+  async ERC20TransferFrom (to, value) {
     try {
       return await this.call(
         'transferFrom',
         [this.eth_address, to, value],
-        simulate
+        false
       ).then((res) => {
         return res.processed.action_traces[0].console
       })
