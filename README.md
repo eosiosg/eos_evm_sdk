@@ -1,7 +1,6 @@
 # eos_evm_sdk
 EOS EVM js client
 
-There are more debug logs in nodeos when open **--contract-console** and add **logging.json** in **config dir**
 
 ## Construct EOSEVMClient
 ```js
@@ -42,28 +41,28 @@ const api = new Api({ rpc, signatureProvider, textDecoder: new TextDecoder(), te
   
   let account_eos_evm_a = new EOSEVMClient(rpc, api, config, 'eosevm11111d', '', '')
 ```
-### 0. transfer
+
+## Functions
+### 1. native transfer
    * @method transfer
    * @for  Eos_evm_sdk
    * @param {string} to
    * @param {int} value   
    * native token transfer **to** account **value**
-   * */
    ```js
-   account_eosevm11111b_eos.transfer('0xd81f4358cb8cab53d005e7f47c7ba3f5116000a6', 1000)
+   await account_eosevm11111b_eos.transfer('0xd81f4358cb8cab53d005e7f47c7ba3f5116000a6', 1000000).then((res) => console.log(res))
    ```
    
 
-### 1. createETHAddress
-   * @method createETHAddress
+### 2. createAddress
+   * @method createAddress
    * @for  Eos_evm_sdk
    * @param {string} eos_account
    * @param {string} eth_address optional
    * @return
-   * create  EOS associate account or ETH account
+   * create  EOS associate account or ETH address
    * 1. create EOS account, second param string is optional
-   * 2. create ETH account, second param string must be native ETH address which user own the private key
-   * */
+   * 2. create ETH address, second param string **must be native ETH address** which user own the **private key**
 
   ```js
   let account_eos_evm_a = new EOSEVMClient(rpc, api, config, 'eosevm11111d', '', '')
@@ -73,31 +72,31 @@ const api = new Api({ rpc, signatureProvider, textDecoder: new TextDecoder(), te
 ### 2. linkToken
    * @method linkToken
    * @for  Eos_evm_sdk
-   * @param {string} extended_symbol
-   * link token first
-   * */
+   * @param {string} extended_symbol i.e. {"sym":"4,EOS", "contract":"eosio.token"}
+   * link token as native token in account table
+   ```js
+   await eos_evm_sdk.linkToken("{\"sym\":\"4,EOS\", \"contract\":\"eosio.token\"}").then((res) => console.log(res))
+   ```
 
-### 3. depositToken
-   * @method depositToken
+### 3. deposit
+   * @method deposit
    * @for  Eos_evm_sdk
    * @param {string} from
    * @param {string} quantity
    * deposit EOS associate account quantity balance
    * transfer balance to evm contract address and will deposit balance to the associate EOSIO account address
-   * */
    
    ```js
    account_eosevm11111b_eos.deposit('10.0000 EOS').then((res) => console.log(res))
    ```
    
-### 4. withdrawToken
-   * @method withdrawToken
+### 4. withdraw
+   * @method withdraw
    * @for  Eos_evm_sdk
    * @param {string} eos_account
    * @param {string} quantity
    * withdraw EOS associate account quantity balance
    * withdraw balance from evm contract address and will withdraw balance to the associate EOSIO account
-   * */
    ```js
    account_eosevm11111b_eos.withdraw('10.0000 EOS').then((res) => console.log(res))
    ```
@@ -105,8 +104,7 @@ const api = new Api({ rpc, signatureProvider, textDecoder: new TextDecoder(), te
 ### 5. getNonce
    * @method: getNonce
    * @for  Eos_evm_sdk
-   * retrive nonce from eos table for current account
-   * */
+   * get nonce from eos table for current account
    
    ```js
    account_eosevm11111b_eos.getNonce().then((res) => console.log(res))
@@ -115,93 +113,73 @@ const api = new Api({ rpc, signatureProvider, textDecoder: new TextDecoder(), te
    * @method: getAllAccounts
    * @for  Eos_evm_sdk
    * get all accounts in table limit 100
-   * */
    
    ```js
    account_eosevm11111b_eos.getAllAccounts().then((res) => console.log(res))
    ```
    
-### 6. getAccountInfoByETH
+### 7. getAccountInfoByETH
    * @method getAccountInfoByETH
    * @for  Eos_evm_sdk
    * get account infomation by ETH address
-   * */
    ```js
    account_eosevm11111b_eos.getAccountInfoByETH().then((res) => console.log(res))
    ```
     
-### 7. getAccountInfoByEOS
+### 8. getAccountInfoByEOS
    * @method getAccountInfoByEOS
    * @for  Eos_evm_sdk
    * get account infomation by EOS account
-   * */
    ```js
    account_eosevm11111b_eos.getAccountInfoByEOS().then((res) => console.log(res))
    ```
-### 8. getAssociateEOS
+   
+### 9. getAssociateEOS
    * @method getAssociateEOS
    * @for  Eos_evm_sdk
    * get associate EOS account in account infomation
-   * */
    ```js
    account_eosevm11111b_eos.getAssociateEOS().then((res) => console.log(res))
    ```
     
-### 9. getBalance
+### 10. getBalance
    * @method getBalance
    * @for  Eos_evm_sdk
    * get balance for current address
-   * */
    ```js
    account_eosevm11111b_eos.getBalance().then((res) => console.log(res))
    ```
+   
+### 11. call
+   * @method call
+   * @for  Eos_evm_sdk
+   * @param {string} method: function signature need to be send
+   * @param {array} args: function param need to be send
+   * @param {boolean} simulate: whether this is a simulated action. If simulate is true, the transaction is forced to fail after execution; if simulate is false, the transaction is executed as it should be.
+   * @param {int} nonce: nonce, if = 0, it will retrive from EOSIO account table
+   * @param {int} value: transfer value amount wei, default 0
+   * @param {boolean} transfer: if true native transfer, defalut false
+   * @param {boolean} ethSign: if true use ETH sign else use EOS signature
+   * @param {int} gasPrice: defalut config.defaultGasPrice
+   * @param {int} gasLimit: default config.defaultGasLimit
+   * call method with args
+   ```js
+   await account_eosevm11111b_raw_eth.call('transfer',
+    ['0x46051cfbfd3453f72565818a6b3e0a155a804330', 1],
+    false
+   ).then((res) => console.log(res))
+   ```
     
-### 10. setContract
-   * @method setContract
+### 12. createContract
+   * @method createContract
    * @for  Eos_evm_sdk
    * @param {array} args
    * set contract in current address
-   * */
    ```js
-   account_eosevm11111b_eos.setContract([10000, 'first token', 4, 'SYS']).then((res) => console.log(res))
+   account_eosevm11111b_eos.createContract([10000, 'first token', 4, 'SYS']).then((res) => console.log(res))
    ```
-### 11 ERC20 wrapper
-
-#### 11.1 ERC20Transfer
-   * @method ERC20Transfer
-   * @for  Eos_evm_sdk
-   * @param {string} to
-   * @param {int} value
-   * transfer from current account to **to** account
-   * */
-   ```js
-   account_eosevm11111b_raw_eth.ERC20Transfer('0x8c68f5c66628480dd2c2323a7c972fda099900cc', 110)
-   ```
-
-#### 11.2 ERC20Approve
-   * @method ERC20Approve
-   * @for  Eos_evm_sdk
-   * @param {string} spender
-   * @param {int} amount
-   * approve spender to cost amount value from owner
-   * */
-  ```js
-  account_eosevm11111b_raw_eth.ERC20Approve('0x39944247c2edf660d86d57764b58d83b8eee9014', 200).then((res) => console.log(res))
-  ```
-    
-#### 11.3 ERC20TransferFrom
-   * @method ERC20TransferFrom
-   * @for  Eos_evm_sdk
-   * @param {string} to
-   * @param {int} value
-   * transfer from current account to **to** account, this method is used with **ERC20Approve** method
-   * */
-   ```js
-   account_eosevm11111b_raw_eth.ERC20TransferFrom('0x39944247c2edf660d86d57764b58d83b8eee9014', 100).then((res) => console.log(res))
-   ```
-  
-  
-### 12. sendAction
+   
+### 13. sendAction
    * @method sendAction
    * @for  Eos_evm_sdk
    * @param {string} method: function signature need to be send
@@ -216,14 +194,86 @@ const api = new Api({ rpc, signatureProvider, textDecoder: new TextDecoder(), te
    * there are three types of sending raw transaction
    * 1. create contract address
    * 2. execute vm code for certain evm address
-   * */
   ```js
   account_eosevm11111b_raw_eth.sendAction(
   'transferFrom',
   ['0xe327e755438fbdf9e60891d9b752da10a38514d1', '0x39944247c2edf660d86d57764b58d83b8eee9014', 10]
   )
   ```
+  
+### 14. ERC20 wrapper
+
+#### 14.1 ERC20Transfer
+   * @method ERC20Transfer
+   * @for  Eos_evm_sdk
+   * @param {string} to
+   * @param {int} value
+   * transfer from current account to **to** account
+   ```js
+   account_eosevm11111b_raw_eth.ERC20Transfer('0x8c68f5c66628480dd2c2323a7c972fda099900cc', 110)
+   ```
+
+#### 14.2 ERC20TotalSupply
+   * @method ERC20TotalSupply
+   * @for  Eos_evm_sdk
+   * @param {string} to
+   * get total supply for destination contract
+   ```js
+   await account_eosevm11111b_raw_eth.ERC20TotalSupply().then((res) => console.log(res))
+   ```
+#### 14.3 ERC20Symbol
+   * @method ERC20Symbol
+   * @for  Eos_evm_sdk
+   * @param {string} to
+   * get symbol for destination contract
+   ```js
+   await account_eosevm11111b_raw_eth.ERC20Symbol().then((res) => console.log(res))
+   ```
+   
+#### 14.4 ERC20BalanceOf
+   * @method ERC20BalanceOf
+   * @for  Eos_evm_sdk
+   * @param {string} to
+   * get balance of token for this account
+   ```js
+   await account_eosevm11111b_raw_eth.ERC20BalanceOf().then((res) => console.log(res))
+   ```
+   
+#### 14.5 ERC20Decimals
+   * @method ERC20Decimals
+   * @for  Eos_evm_sdk
+   * @param {string} to
+   * get decimals of token for this account
+   ```js
+   await account_eosevm11111b_raw_eth.ERC20Decimals().then((res) => console.log(res))
+   ```
+
+#### 14.6 ERC20Approve
+   * @method ERC20Approve
+   * @for  Eos_evm_sdk
+   * @param {string} spender
+   * @param {int} amount
+   * approve spender to cost amount value from owner
+  ```js
+  account_eosevm11111b_raw_eth.ERC20Approve('0x39944247c2edf660d86d57764b58d83b8eee9014', 200).then((res) => console.log(res))
+  ```
+
+#### 14.7 ERC20Allowance
+   * @method ERC20Allowance
+   * @for  Eos_evm_sdk
+   * @param {string} spender
+   * get allowance spender to cost amount value from owner
+  ```js
+  await account_eosevm11111b_raw_eth.ERC20Allowance('0x39944247c2edf660d86d57764b58d83b8eee9014').then(res => console.log(res))
+  ```
     
-    
-    
-    
+#### 14.8 ERC20TransferFrom
+   * @method ERC20TransferFrom
+   * @for  Eos_evm_sdk
+   * @param {string} to
+   * @param {int} value
+   * transfer from current account to **to** account, this method is used with **ERC20Approve** method
+   ```js
+   await account_eosevm11111b_raw_eth.ERC20TransferFrom('0x39944247c2edf660d86d57764b58d83b8eee9014', 1,).then(res => console.log(res))
+   ```
+   

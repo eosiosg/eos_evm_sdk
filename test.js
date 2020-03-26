@@ -1,5 +1,5 @@
-const  Eos_evm_sdk  = require('./eos_evm_sdk')
-const { Api, JsonRpc } = require('eosjs')
+const Eos_evm_sdk = require('./eos_evm_sdk')
+const { Api, JsonRpc, RpcError } = require('eosjs')
 const { JsSignatureProvider } = require('eosjs/dist/eosjs-jssig')      // development only
 
 const fetch = require('node-fetch')
@@ -14,12 +14,12 @@ const fkey = "" // eosevm11111d
 
 const signatureProvider = new JsSignatureProvider([defaultPrivateKey, akey, bkey, ckey, dkey, fkey])
 
-const rpc = new JsonRpc('https://api-kylin.eoslaomao.com', { fetch })
+const rpc = new JsonRpc('http://127.0.0.1:8888', { fetch })
 
 const api = new Api({ rpc, signatureProvider, textDecoder: new TextDecoder(), textEncoder: new TextEncoder() })
 
 
-const env = 'kylin'
+const env = 'local'
 let config = {}
 
 if (env === "mainnet") {
@@ -80,128 +80,51 @@ if (env === "mainnet") {
   }
 }
 
-const eos_evm_sdk = new Eos_evm_sdk(rpc, api, config)
 
-/**
- * test code
- * */
-// eos_evm_sdk.depositToken('eosevm11111b', '100.0000 EOS')
-// eos_evm_sdk.getBalanceByEOS('eosevm11111b').then((res) => console.log(`balance is: ${res}`))
-// eos_evm_sdk.transfer('0x46051cfbfd3453f72565818a6b3e0a155a804330', '0xd81f4358cb8cab53d005e7f47c7ba3f5116000a6', '1000')
-// eos_evm_sdk.linkToken(`{"sym":"4,EOS", "contract":"eosio.token"}`)
+async function main () {
+  /**
+   * test code
+   * */
+  const eos_evm_sdk = new Eos_evm_sdk(rpc, api, config)
 
-// eos_evm_sdk.createETHAddress('eosevm11111b', 'aaaaaa')
-// eos_evm_sdk.createETHAddress('eosevm11111b', 'd81f4358cb8cab53d005e7f47c7ba3f5116000a6')
-// eos_evm_sdk.createETHAddress('eosevm11111c', 'aaaaaa')
-// eos_evm_sdk.createETHAddress('eosevm11111c', '39944247c2edf660d86d57764b58d83b8eee9014')
-// eos_evm_sdk.createETHAddress('eosevm11111d', 'aaaaaa')
-// eos_evm_sdk.createETHAddress('eosevm11111d', 'e327e755438fbdf9e60891d9b752da10a38514d1')
+  const EOSEVMClient = require('./EOSEVMClient')
+  let account_eos_evm_a = new EOSEVMClient(rpc, api, config, 'eosevm11111b', '', '')
+  // await account_eos_evm_a.createAddress('aaaaaa').then((res) => console.log(res))
 
-// eos_evm_sdk.getAccountByEOS('eosevm11111b').then((res) => console.log(res))
+  await account_eos_evm_a.getAllAccounts().then((res) => console.log(res))
+  await account_eos_evm_a.getAccountInfoByEOS().then((res) => console.log(res))
 
-// eos_evm_sdk.deployContract(
-//   '0xd81f4358cb8cab53d005e7f47c7ba3f5116000a6',
-//   [10000, 'first token', 4, 'SYS'],
-// )
+  const account_eosevm11111b_eos = new EOSEVMClient(rpc, api, config, 'eosevm11111b', '0xf3c855f2988f7eabc4b4352bc5980825ebd8c3ef', '')
+  const account_eosevm11111b_raw_eth = new EOSEVMClient(rpc, api, config, '', '0xd81f4358cb8cab53d005e7f47c7ba3f5116000a6', '0x4a40687878845ef7cfe60b5a6f2cb47627469b77')
 
-// eos_evm_sdk.ERC20TotalSupply(
-//   '0x4a40687878845ef7cfe60b5a6f2cb47627469b77',
-//   '0x39944247c2edf660d86d57764b58d83b8eee9014'
-// )
+  const account_eosevm11111c_eos = new EOSEVMClient(rpc, api, config, 'eosevm11111c', '0xbb48c1cd567dba75be49e6574639041a2c042c0d', '')
+  const account_eosevm11111c_raw_eth = new EOSEVMClient(rpc, api, config, '', '0x39944247c2edf660d86d57764b58d83b8eee9014', '0x4a40687878845ef7cfe60b5a6f2cb47627469b77')
 
-// eos_evm_sdk.ERC20Symbol(
-//   '0x4a40687878845ef7cfe60b5a6f2cb47627469b77',
-//   '0x39944247c2edf660d86d57764b58d83b8eee9014'
-// )
+  const account_eosevm11111d_eos = new EOSEVMClient(rpc, api, config, 'eosevm11111d', '0x8c68f5c66628480dd2c2323a7c972fda099900cc', '')
+  const account_eosevm11111d_raw_eth = new EOSEVMClient(rpc, api, config, '', '0xe327e755438fbdf9e60891d9b752da10a38514d1', '0x4a40687878845ef7cfe60b5a6f2cb47627469b77')
 
-// eos_evm_sdk.ERC20Decimals(
-//   '0x4a40687878845ef7cfe60b5a6f2cb47627469b77',
-//   '0x39944247c2edf660d86d57764b58d83b8eee9014'
-// )
+  await account_eosevm11111b_eos.deposit('0.0010 EOS').then((res) => console.log(res))
+  await account_eosevm11111b_raw_eth.getNonce().then((res) => console.log(`nonce: ${res}`))
+  await account_eosevm11111b_eos.transfer('0xd81f4358cb8cab53d005e7f47c7ba3f5116000a6', 1000000).then((res) => console.log(res))
+  await account_eosevm11111b_eos.getBalance().then((balance) => console.log(`balance: ${balance}`))
+  await account_eosevm11111b_raw_eth.transfer('0x39944247c2edf660d86d57764b58d83b8eee9014', 20).then((res) => console.log(res))
+  await account_eosevm11111b_raw_eth.ERC20TotalSupply().then((res) => console.log(res))
+  await account_eosevm11111b_raw_eth.ERC20Symbol().then((res) => console.log(res))
+  await account_eosevm11111b_raw_eth.ERC20Transfer('0x46051cfbfd3453f72565818a6b3e0a155a804330', 1).then(
+    res => console.log(res)
+  )
+  await account_eosevm11111b_raw_eth.ERC20BalanceOf().then(res => console.log(res))
+  await account_eosevm11111b_raw_eth.ERC20Symbol().then(res => console.log(res))
+  await account_eosevm11111b_raw_eth.ERC20TotalSupply().then(res => console.log(res))
+  await account_eosevm11111b_raw_eth.ERC20Decimals().then(res => console.log(res))
 
-// eos_evm_sdk.ERC20Transfer(
-//   '0x4a40687878845ef7cfe60b5a6f2cb47627469b77',
-//   '0xd81f4358cb8cab53d005e7f47c7ba3f5116000a6',
-//   '0x39944247c2edf660d86d57764b58d83b8eee9014',
-//   '0x29'
-// )
+  await account_eosevm11111b_raw_eth.ERC20Approve('0x39944247c2edf660d86d57764b58d83b8eee9014', 10).then(res => console.log(res))
+  await account_eosevm11111b_raw_eth.ERC20Allowance('0x39944247c2edf660d86d57764b58d83b8eee9014').then(res => console.log(res))
+  await account_eosevm11111b_raw_eth.ERC20TransferFrom('0x39944247c2edf660d86d57764b58d83b8eee9014', 1,).then(res => console.log(res))
+  await account_eosevm11111b_raw_eth.call('transfer',
+    ['0x46051cfbfd3453f72565818a6b3e0a155a804330', 1],
+    false
+  ).then((res) => console.log(res))
+}
 
-// eos_evm_sdk.ERC20BalanceOf(
-//   '0x4a40687878845ef7cfe60b5a6f2cb47627469b77',
-//   '0x39944247c2edf660d86d57764b58d83b8eee9014'
-// )
-
-// eos_evm_sdk.sendRawAction(
-//   '',
-//   '',
-//   [10000, 'first token', 4, 'SYS'],
-//   '0xd81f4358cb8cab53d005e7f47c7ba3f5116000a6',
-//   0,0, true
-// )
-
-// eos_evm_sdk.sendRawAction(
-//   '0x4a40687878845ef7cfe60b5a6f2cb47627469b77',
-//   'balanceOf',
-//   ['0x39944247c2edf660d86d57764b58d83b8eee9014'],
-//   '0x39944247c2edf660d86d57764b58d83b8eee9014'
-// )
-//
-// eos_evm_sdk.sendRawAction(
-//   '0x4a40687878845ef7cfe60b5a6f2cb47627469b77',
-//   'transfer',
-//   ['0x39944247c2edf660d86d57764b58d83b8eee9014', '0x14'],
-//   '0xd81f4358cb8cab53d005e7f47c7ba3f5116000a6'
-// )
-//
-// eos_evm_sdk.sendRawAction(
-//  '0x4a40687878845ef7cfe60b5a6f2cb47627469b77',
-//  'approve',
-//  ['0x39944247c2edf660d86d57764b58d83b8eee9014', '200'],
-//  '0xe327e755438fbdf9e60891d9b752da10a38514d1'
-// )
-//
-// eos_evm_sdk.sendRawAction(
-//   '0x4a40687878845ef7cfe60b5a6f2cb47627469b77',
-//   'allowance',
-//   ['0xe327e755438fbdf9e60891d9b752da10a38514d1', '0x39944247c2edf660d86d57764b58d83b8eee9014'],
-//   '0xe327e755438fbdf9e60891d9b752da10a38514d1'
-// )
-//
-// eos_evm_sdk.sendRawAction(
-//   '0x4a40687878845ef7cfe60b5a6f2cb47627469b77',
-//   'transferFrom',
-//   ['0xe327e755438fbdf9e60891d9b752da10a38514d1', '0x39944247c2edf660d86d57764b58d83b8eee9014', '10'],
-//   '0xe327e755438fbdf9e60891d9b752da10a38514d1'
-// )
-
-
-const EOSEVMClient  = require('./EOSEVMClient')
-let account_eos_evm_a = new EOSEVMClient(rpc, api, config, 'eosevm11111d', '', '')
-account_eos_evm_a.createAddress('0xe327e755438fbdf9e60891d9b752da10a38514d1').then((res) => console.log(res))
-
-// account_eos_evm_a.getAccountInfoByEOS().then((res) => console.log(res))
-
-const account_eosevm11111b_eos = new EOSEVMClient(rpc, api, config, 'eosevm11111b', '0xf3c855f2988f7eabc4b4352bc5980825ebd8c3ef', '')
-const account_eosevm11111b_raw_eth = new EOSEVMClient(rpc, api, config, '', '0xd81f4358cb8cab53d005e7f47c7ba3f5116000a6', '0x4a40687878845ef7cfe60b5a6f2cb47627469b77')
-
-const account_eosevm11111c_eos = new EOSEVMClient(rpc, api, config, 'eosevm11111c', '0xbb48c1cd567dba75be49e6574639041a2c042c0d', '')
-const account_eosevm11111c_raw_eth = new EOSEVMClient(rpc, api, config, '', '0x39944247c2edf660d86d57764b58d83b8eee9014', '0x4a40687878845ef7cfe60b5a6f2cb47627469b77')
-
-const account_eosevm11111d_eos = new EOSEVMClient(rpc, api, config, 'eosevm11111d', '0x8c68f5c66628480dd2c2323a7c972fda099900cc', '')
-const account_eosevm11111d_raw_eth = new EOSEVMClient(rpc, api, config, '', '0xe327e755438fbdf9e60891d9b752da10a38514d1', '0x4a40687878845ef7cfe60b5a6f2cb47627469b77')
-
-// account_client.ERC20BalanceOf('0x4a40687878845ef7cfe60b5a6f2cb47627469b77')
-// account_eosevm11111b_eos.deposit('10.0000 EOS')
-// account_client.getSenderNonce().then((res) => console.log(`nonce: ${res}`))
-// account_eosevm11111b_eos.transfer('0xd81f4358cb8cab53d005e7f47c7ba3f5116000a6', '1000')
-
-// account_eosevm11111b_eos.getBalance().then((balance) => console.log(`balance: ${balance}`))
-
-// account_eosevm11111b_eos.transfer('0x46051cfbfd3453f72565818a6b3e0a155a804330', '1000')
-// account_eosevm11111b_raw_eth.transfer('0x8c68f5c66628480dd2c2323a7c972fda099900cc', '500').then((res) => console.log(res))
-
-
-// account_eosevm11111b_raw_eth.ERC20TotalSupply().then(res => console.log(res))
-// account_eosevm11111b_raw_eth.ERC20Transfer('0x8c68f5c66628480dd2c2323a7c972fda099900cc', '0x1100')
-// account_eosevm11111b_raw_eth.ERC20BalanceOf().then(res => console.log(res))
-
+main()
