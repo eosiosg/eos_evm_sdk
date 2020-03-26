@@ -77,6 +77,9 @@ const api = new Api({ rpc, signatureProvider, textDecoder: new TextDecoder(), te
    * @param {string} extended_symbol i.e. {"sym":"4,EOS", "contract":"eosio.token"}
    * link token as native token in account table
    * */
+   ```js
+   await eos_evm_sdk.linkToken("{\"sym\":\"4,EOS\", \"contract\":\"eosio.token\"}").then((res) => console.log(res))
+   ```
 
 ### 3. deposit
    * @method deposit
