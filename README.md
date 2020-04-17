@@ -43,7 +43,33 @@ const api = new Api({ rpc, signatureProvider, textDecoder: new TextDecoder(), te
 ```
 
 ## Functions
-### 1. native transfer
+### setContract
+   * @method setContract
+   * @for  Eos_evm_sdk
+   * link token as native token in account table
+   ```js
+   await eos_evm_sdk.setContract().then((res) => console.log(res))
+   ```
+### updateAuth
+   * @method updateAuth
+   * @for  Eos_evm_sdk
+   * updateAuth for contract
+   ```js
+   await eos_evm_sdk.updateAuth().then(res => console.log(res));
+   ```   
+   
+### linkToken
+   * @method linkToken
+   * @for  Eos_evm_sdk
+   * @param {int} precision
+   * @param {string} token_sym
+   * @param {string} contract
+   * link token as native token in account table
+   ```js
+   await eos_evm_sdk.linkToken(4, 'EOS', 'eosio.token').then((res) => console.log(res))
+   ```
+   
+### native transfer
    * @method transfer
    * @for  Eos_evm_sdk
    * @param {string} to
@@ -52,9 +78,8 @@ const api = new Api({ rpc, signatureProvider, textDecoder: new TextDecoder(), te
    ```js
    await account_eosevm11111b_eos.transfer('0xd81f4358cb8cab53d005e7f47c7ba3f5116000a6', 1000000).then((res) => console.log(res))
    ```
-   
 
-### 2. createAddress
+### createAddress
    * @method createAddress
    * @for  Eos_evm_sdk
    * @param {string} eos_account
@@ -69,16 +94,7 @@ const api = new Api({ rpc, signatureProvider, textDecoder: new TextDecoder(), te
   account_eos_evm_a.createAddress('0xe327e755438fbdf9e60891d9b752da10a38514d1').then((res) => console.log(res))
   ```
 
-### 2. linkToken
-   * @method linkToken
-   * @for  Eos_evm_sdk
-   * @param {string} extended_symbol i.e. {"sym":"4,EOS", "contract":"eosio.token"}
-   * link token as native token in account table
-   ```js
-   await eos_evm_sdk.linkToken("{\"sym\":\"4,EOS\", \"contract\":\"eosio.token\"}").then((res) => console.log(res))
-   ```
-
-### 3. deposit
+### deposit
    * @method deposit
    * @for  Eos_evm_sdk
    * @param {string} from
@@ -90,7 +106,7 @@ const api = new Api({ rpc, signatureProvider, textDecoder: new TextDecoder(), te
    account_eosevm11111b_eos.deposit('10.0000 EOS').then((res) => console.log(res))
    ```
    
-### 4. withdraw
+### withdraw
    * @method withdraw
    * @for  Eos_evm_sdk
    * @param {string} eos_account
@@ -101,7 +117,7 @@ const api = new Api({ rpc, signatureProvider, textDecoder: new TextDecoder(), te
    account_eosevm11111b_eos.withdraw('10.0000 EOS').then((res) => console.log(res))
    ```
    
-### 5. getNonce
+### getNonce
    * @method: getNonce
    * @for  Eos_evm_sdk
    * get nonce from eos table for current account
@@ -109,7 +125,7 @@ const api = new Api({ rpc, signatureProvider, textDecoder: new TextDecoder(), te
    ```js
    account_eosevm11111b_eos.getNonce().then((res) => console.log(res))
    ```
-### 6. getAllAccounts
+### getAllAccounts
    * @method: getAllAccounts
    * @for  Eos_evm_sdk
    * get all accounts in table limit 100
@@ -118,7 +134,7 @@ const api = new Api({ rpc, signatureProvider, textDecoder: new TextDecoder(), te
    account_eosevm11111b_eos.getAllAccounts().then((res) => console.log(res))
    ```
    
-### 7. getAccountInfoByETH
+### getAccountInfoByETH
    * @method getAccountInfoByETH
    * @for  Eos_evm_sdk
    * get account infomation by ETH address
@@ -126,7 +142,7 @@ const api = new Api({ rpc, signatureProvider, textDecoder: new TextDecoder(), te
    account_eosevm11111b_eos.getAccountInfoByETH().then((res) => console.log(res))
    ```
     
-### 8. getAccountInfoByEOS
+### getAccountInfoByEOS
    * @method getAccountInfoByEOS
    * @for  Eos_evm_sdk
    * get account infomation by EOS account
@@ -134,7 +150,7 @@ const api = new Api({ rpc, signatureProvider, textDecoder: new TextDecoder(), te
    account_eosevm11111b_eos.getAccountInfoByEOS().then((res) => console.log(res))
    ```
    
-### 9. getAssociateEOS
+### getAssociateEOS
    * @method getAssociateEOS
    * @for  Eos_evm_sdk
    * get associate EOS account in account infomation
@@ -142,7 +158,7 @@ const api = new Api({ rpc, signatureProvider, textDecoder: new TextDecoder(), te
    account_eosevm11111b_eos.getAssociateEOS().then((res) => console.log(res))
    ```
     
-### 10. getBalance
+### getBalance
    * @method getBalance
    * @for  Eos_evm_sdk
    * get balance for current address
@@ -150,7 +166,7 @@ const api = new Api({ rpc, signatureProvider, textDecoder: new TextDecoder(), te
    account_eosevm11111b_eos.getBalance().then((res) => console.log(res))
    ```
    
-### 11. call
+### call
    * @method call
    * @for  Eos_evm_sdk
    * @param {string} method: function signature need to be send
@@ -170,7 +186,7 @@ const api = new Api({ rpc, signatureProvider, textDecoder: new TextDecoder(), te
    ).then((res) => console.log(res))
    ```
     
-### 12. createContract
+### createContract
    * @method createContract
    * @for  Eos_evm_sdk
    * @param {array} args
@@ -179,7 +195,7 @@ const api = new Api({ rpc, signatureProvider, textDecoder: new TextDecoder(), te
    account_eosevm11111b_eos.createContract([10000, 'first token', 4, 'SYS']).then((res) => console.log(res))
    ```
    
-### 13. sendAction
+### sendAction
    * @method sendAction
    * @for  Eos_evm_sdk
    * @param {string} method: function signature need to be send
@@ -201,9 +217,9 @@ const api = new Api({ rpc, signatureProvider, textDecoder: new TextDecoder(), te
   )
   ```
   
-### 14. ERC20 wrapper
+### ERC20 wrapper
 
-#### 14.1 ERC20Transfer
+#### ERC20Transfer
    * @method ERC20Transfer
    * @for  Eos_evm_sdk
    * @param {string} to
@@ -213,7 +229,7 @@ const api = new Api({ rpc, signatureProvider, textDecoder: new TextDecoder(), te
    account_eosevm11111b_raw_eth.ERC20Transfer('0x8c68f5c66628480dd2c2323a7c972fda099900cc', 110)
    ```
 
-#### 14.2 ERC20TotalSupply
+#### ERC20TotalSupply
    * @method ERC20TotalSupply
    * @for  Eos_evm_sdk
    * @param {string} to
@@ -221,7 +237,7 @@ const api = new Api({ rpc, signatureProvider, textDecoder: new TextDecoder(), te
    ```js
    await account_eosevm11111b_raw_eth.ERC20TotalSupply().then((res) => console.log(res))
    ```
-#### 14.3 ERC20Symbol
+#### ERC20Symbol
    * @method ERC20Symbol
    * @for  Eos_evm_sdk
    * @param {string} to
@@ -230,7 +246,7 @@ const api = new Api({ rpc, signatureProvider, textDecoder: new TextDecoder(), te
    await account_eosevm11111b_raw_eth.ERC20Symbol().then((res) => console.log(res))
    ```
    
-#### 14.4 ERC20BalanceOf
+#### ERC20BalanceOf
    * @method ERC20BalanceOf
    * @for  Eos_evm_sdk
    * @param {string} to
@@ -239,7 +255,7 @@ const api = new Api({ rpc, signatureProvider, textDecoder: new TextDecoder(), te
    await account_eosevm11111b_raw_eth.ERC20BalanceOf().then((res) => console.log(res))
    ```
    
-#### 14.5 ERC20Decimals
+#### ERC20Decimals
    * @method ERC20Decimals
    * @for  Eos_evm_sdk
    * @param {string} to
@@ -248,7 +264,7 @@ const api = new Api({ rpc, signatureProvider, textDecoder: new TextDecoder(), te
    await account_eosevm11111b_raw_eth.ERC20Decimals().then((res) => console.log(res))
    ```
 
-#### 14.6 ERC20Approve
+#### ERC20Approve
    * @method ERC20Approve
    * @for  Eos_evm_sdk
    * @param {string} spender
@@ -258,7 +274,7 @@ const api = new Api({ rpc, signatureProvider, textDecoder: new TextDecoder(), te
   account_eosevm11111b_raw_eth.ERC20Approve('0x39944247c2edf660d86d57764b58d83b8eee9014', 200).then((res) => console.log(res))
   ```
 
-#### 14.7 ERC20Allowance
+#### ERC20Allowance
    * @method ERC20Allowance
    * @for  Eos_evm_sdk
    * @param {string} spender
@@ -267,7 +283,7 @@ const api = new Api({ rpc, signatureProvider, textDecoder: new TextDecoder(), te
   await account_eosevm11111b_raw_eth.ERC20Allowance('0x39944247c2edf660d86d57764b58d83b8eee9014').then(res => console.log(res))
   ```
     
-#### 14.8 ERC20TransferFrom
+#### ERC20TransferFrom
    * @method ERC20TransferFrom
    * @for  Eos_evm_sdk
    * @param {string} to
