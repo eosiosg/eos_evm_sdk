@@ -5,6 +5,8 @@ const { JsSignatureProvider } = require('eosjs/dist/eosjs-jssig')      // develo
 const fetch = require('node-fetch')
 const { TextEncoder, TextDecoder } = require('util')                   // node only; native TextEncoder/Decoder
 
+const EOSEVMClient = require('./EOSEVMClient')
+
 const defaultPrivateKey = "" // bob
 const akey = "" // eosevm111111
 const bkey = "" // eosevm11111b
@@ -14,20 +16,16 @@ const fkey = "" // eosevm11111d
 
 const signatureProvider = new JsSignatureProvider([defaultPrivateKey, akey, bkey, ckey, dkey, fkey])
 
-const rpc = new JsonRpc('http://127.0.0.1:8888', { fetch })
-
-const api = new Api({ rpc, signatureProvider, textDecoder: new TextDecoder(), textEncoder: new TextEncoder() })
-
 
 const env = 'local'
 let config = {}
 
 if (env === "mainnet") {
 
-} else if (env === 'kylin') {
+} else if (env === 'jungle') {
   config = {
     chainid: '5fff1dae8dc8e2fc4d5b23b2c7665c97f9e9d8edf2b6485a86ba311c25639191',
-    endpoint: 'https://api-kylin.eoslaomao.com',
+    endpoint: 'http://jungle2.cryptolions.io:80',
     contract: 'eosevm111111',
     tokenContract: 'eosio.token',
     tokenPrecision: 4,
@@ -75,10 +73,16 @@ if (env === "mainnet") {
     },
     abiFile: './ERC20/ERC20.json',
     sourceFile: './ERC20/ERC20ByteCode.json',
+    EOSWasmFilePath: './EOSEVMContract/eos_evm.wasm',
+    EOSAbiFilePath: './EOSEVMContract/eos_evm.abi',
     defaultGasPrice: '0x01',
-    defaultGasLimit: '0x27100'
+    defaultGasLimit: '0x0f4240'
   }
 }
+
+const rpc = new JsonRpc('http://127.0.0.1:8888', { fetch })
+
+const api = new Api({ rpc, signatureProvider, textDecoder: new TextDecoder(), textEncoder: new TextEncoder() })
 
 
 async function main () {
@@ -87,9 +91,16 @@ async function main () {
    * */
   const eos_evm_sdk = new Eos_evm_sdk(rpc, api, config)
 
-  const EOSEVMClient = require('./EOSEVMClient')
+  // await eos_evm_sdk.setContract().then((res) => console.log(res))
+
+  await eos_evm_sdk.linkToken(4, 'EOS', 'eosio.token').then((res) => console.log(res))
+
+  await eos_evm_sdk.updateAuth().then(res => console.log(res));
+
   let account_eos_evm_a = new EOSEVMClient(rpc, api, config, 'eosevm11111b', '', '')
-  // await account_eos_evm_a.createAddress('aaaaaa').then((res) => console.log(res))
+  await account_eos_evm_a.createAddress('aaaaaa').then((res) => console.log(res))
+  // create native ETH address
+  await account_eos_evm_a.createAddress('d81f4358cb8cab53d005e7f47c7ba3f5116000a6').then((res) => console.log(res))
 
   await account_eos_evm_a.getAllAccounts().then((res) => console.log(res))
   await account_eos_evm_a.getAccountInfoByEOS().then((res) => console.log(res))
@@ -97,6 +108,13 @@ async function main () {
   const account_eosevm11111b_eos = new EOSEVMClient(rpc, api, config, 'eosevm11111b', '0xf3c855f2988f7eabc4b4352bc5980825ebd8c3ef', '')
   const account_eosevm11111b_raw_eth = new EOSEVMClient(rpc, api, config, '', '0xd81f4358cb8cab53d005e7f47c7ba3f5116000a6', '0x4a40687878845ef7cfe60b5a6f2cb47627469b77')
 
+  await account_eosevm11111b_raw_eth.createContract([100000, 'first token', 4, 'SYS']).then(
+    res => console.log(res)
+  )
+
+  await account_eosevm11111b_raw_eth.ERC20Transfer('0x46051cfbfd3453f72565818a6b3e0a155a804330', 1).then(
+    res => console.log(res.processed.action_traces[0].console)
+  )
   const account_eosevm11111c_eos = new EOSEVMClient(rpc, api, config, 'eosevm11111c', '0xbb48c1cd567dba75be49e6574639041a2c042c0d', '')
   const account_eosevm11111c_raw_eth = new EOSEVMClient(rpc, api, config, '', '0x39944247c2edf660d86d57764b58d83b8eee9014', '0x4a40687878845ef7cfe60b5a6f2cb47627469b77')
 

@@ -1,6 +1,7 @@
 const fs = require("fs")
 const Web3 = require('web3')
 const web3 = new Web3()
+const { Serialize } = require('eosjs')
 const EthereumTx = require('ethereumjs-tx').Transaction
 
 
@@ -9,11 +10,118 @@ class Eos_evm_sdk {
     this.api = api
     this.rpc = rpc
     this.config = config
-    // load abi file from json
+    // load evm abi file from json
     this.abi = JSON.parse(fs.readFileSync(config.abiFile))
     this.source = JSON.parse(fs.readFileSync(config.sourceFile))
+    // load eos wasm hex string
+    this.wasmHexString = fs.readFileSync(this.config.EOSWasmFilePath).toString('hex')
+    // load eos abi hex string
+    const buffer = new Serialize.SerialBuffer({
+      textEncoder: api.textEncoder,
+      textDecoder: api.textDecoder,
+    })
+
+    let abiJSON = JSON.parse(fs.readFileSync(this.config.EOSAbiFilePath, 'utf8'))
+    const abiDefinitions = api.abiTypes.get('abi_def')
+    abiJSON = abiDefinitions.fields.reduce(
+      (acc, { name: fieldName }) =>
+        Object.assign(acc, { [fieldName]: acc[fieldName] || [] }),
+      abiJSON
+    )
+    abiDefinitions.serialize(buffer, abiJSON)
+    this.serializedAbiHexString = Buffer.from(buffer.asUint8Array()).toString('hex')
   }
 
+  async setContract () {
+    try {
+      return await this.api.transact(
+        {
+          actions: [
+            {
+              account: 'eosio',
+              name: 'setcode',
+              authorization: [
+                {
+                  actor: this.config.contract,
+                  permission: 'active',
+                },
+              ],
+              data: {
+                account: this.config.contract,
+                vmtype: 0,
+                vmversion: 0,
+                code: this.wasmHexString,
+              },
+            },
+            {
+              account: 'eosio',
+              name: 'setabi',
+              authorization: [
+                {
+                  actor: this.config.contract,
+                  permission: 'active',
+                },
+              ],
+              data: {
+                account: this.config.contract,
+                vmtype: 0,
+                vmversion: 0,
+                abi: this.serializedAbiHexString,
+              },
+            },
+          ],
+        },
+        {
+          blocksBehind: 3,
+          expireSeconds: 30,
+        })
+    } catch (e) {
+      throw new Error(`set contract exception ${e}`)
+    }
+  }
+
+  async updateAuth () {
+    try {
+      const account = await this.rpc.get_account(this.config.contract)
+      const perms = JSON.parse(JSON.stringify(account.permissions))
+
+      let active_perm = perms.filter((perm) => perm.perm_name === 'active')[0]
+
+      const account_eosio_code_perm = active_perm.required_auth.accounts.filter((account) => account.permission.permission === 'eosio.code')
+      let eosio_code_exist = !(account_eosio_code_perm === undefined || account_eosio_code_perm.length === 0)
+
+      if (eosio_code_exist) return
+      active_perm.required_auth.accounts.push({
+        permission: {
+          actor: this.config.contract,
+          permission: 'eosio.code'
+        },
+        weight: 1
+      })
+
+      return await this.api.transact({
+        actions: [{
+          account: 'eosio',
+          name: 'updateauth',
+          authorization: [{
+            actor: this.config.contract,
+            permission: 'active',
+          }],
+          data: {
+            account: this.config.contract,
+            permission: 'active',
+            parent: active_perm.parent,
+            auth: active_perm.required_auth,
+          },
+        }]
+      }, {
+        blocksBehind: 3,
+        expireSeconds: 30,
+      })
+    } catch (e) {
+      throw new Error(` update auth exception ${e}`)
+    }
+  }
 
   /** createETHAddress
    * @method createETHAccount
@@ -53,12 +161,14 @@ class Eos_evm_sdk {
   /** linkToken
    * @method linkToken
    * @for  Eos_evm_sdk
-   * @param {string} extended_symbol
+   * @param {int} precision
+   * @param {string} token_sym
+   * @param {string} contract
    * link token first
    * */
-  async linkToken (extended_symbol) {
+  async linkToken (precision, token_sym, contract) {
     try {
-      return await this.api.transact({
+      const res = await this.api.transact({
         actions: [{
           account: this.config.contract,
           name: 'linktoken',
@@ -67,15 +177,20 @@ class Eos_evm_sdk {
             permission: 'active',
           }],
           data: {
-            'contract': extended_symbol
+            contract: {
+              sym: `${precision.toString()},${token_sym}`,
+              contract: contract
+            }
           },
         }]
       }, {
         blocksBehind: 3,
         expireSeconds: 30,
       })
+      console.log(res)
     } catch (e) {
-      throw new Error(`${extended_symbol} link exception ${e}`)
+      console.log(e)
+      // throw new Error(`${extended_symbol} link exception ${e}`)
     }
   }
 
@@ -272,7 +387,7 @@ class Eos_evm_sdk {
     })
 
     if (!accountInfo.rows.length) {
-      throw new Error(`no such account ${eos_account}`)
+      throw new Error(`no such account ${eos_account} in account table`)
     }
     return accountInfo.rows[0]
   }
@@ -370,9 +485,9 @@ class Eos_evm_sdk {
         expireSeconds: 30,
       })
     } catch (e) {
-      console.log('\nCaught exception: ' + e);
+      console.log('\nCaught exception: ' + e)
       if (e instanceof RpcError)
-        console.log(e.json);
+        console.log(e.json)
       // console.log(JSON.stringify(e.json, null, 2));
     }
   }
@@ -428,10 +543,10 @@ class Eos_evm_sdk {
    * @param {int} value: i.e: '27100'
    * @param {int} nonce
    * */
-  async deployContract (sender, args, simulate=false, value = 0, nonce = 0, ethSign=true) {
+  async deployContract (sender, args, simulate = false, value = 0, nonce = 0, ethSign = true) {
     const actionParams = {
       to: '',
-      method : '',
+      method: '',
       args: args,
       sender: this.eth_address,
       simulate: simulate,
@@ -533,7 +648,7 @@ class Eos_evm_sdk {
         let eos_sender = await this.getAssociateEOSByETH(sender)
         result = await this.sendRawEOSActionWithEOSSIG(serializedTx, sender, eos_sender)
       }
-    } else  {
+    } else {
       if (ethSign) {
         result = await this.sendSimulateEOSActionWithETHSIG(serializedTx)
       } else {

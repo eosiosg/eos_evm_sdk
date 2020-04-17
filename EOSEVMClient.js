@@ -79,14 +79,12 @@ class EOSEVMClient extends Eos_evm_sdk {
         'transfer',
         [to, amount],
         false
-      ).then(res => {
-        return res.processed.action_traces[0].console
-      })
+      )
     } catch (e) {
       console.log('\nTransaction Execution failed: Caught exception: ' + e)
       if (e instanceof RpcError) {
         let pending_size = "pending console output: ".length
-        return e.json.error.details[1].message.slice(pending_size)
+        return e.json.error
       }
     }
   }
