@@ -16,7 +16,6 @@ const fkey = "" // eosevm11111d
 
 const signatureProvider = new JsSignatureProvider([defaultPrivateKey, akey, bkey, ckey, dkey, fkey])
 
-
 const env = 'local'
 let config = {}
 
@@ -146,5 +145,4 @@ async function main () {
     false
   ).then((res) => console.log(res))
 }
-
 main()
