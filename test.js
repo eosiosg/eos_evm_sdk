@@ -45,8 +45,10 @@ if (env === "mainnet") {
     },
     abiFile: './ERC20/ERC20.json',
     sourceFile: './ERC20/ERC20ByteCode.json',
+    EOSWasmFilePath: './EOSEVMContract/eos_evm.wasm',
+    EOSAbiFilePath: './EOSEVMContract/eos_evm.abi',
     defaultGasPrice: '0x01',
-    defaultGasLimit: '0x27100'
+    defaultGasLimit: '0x0f4240'
   }
 } else if (env === 'local') {
   config = {
@@ -56,7 +58,7 @@ if (env === "mainnet") {
     tokenContract: 'eosio.token',
     tokenPrecision: 4,
     tokenSymbol: 'EOS',
-    worker: 'bpf',
+    worker: 'eosevm11111d',
     ethPrivateKeys: {
       /// address : privateKey
       '0xd81f4358cb8cab53d005e7f47c7ba3f5116000a6': 'cbb1981be330b0d97e620a61b913f678fc9c12c059a70badf92d0db317ff804f',
@@ -79,7 +81,7 @@ if (env === "mainnet") {
   }
 }
 
-const rpc = new JsonRpc('http://127.0.0.1:8888', { fetch })
+const rpc = new JsonRpc(config.endpoint, { fetch })
 
 const api = new Api({ rpc, signatureProvider, textDecoder: new TextDecoder(), textEncoder: new TextEncoder() })
 
@@ -90,7 +92,7 @@ async function main () {
    * */
   const eos_evm_sdk = new Eos_evm_sdk(rpc, api, config)
 
-  // await eos_evm_sdk.setContract().then((res) => console.log(res))
+  await eos_evm_sdk.setContract().then((res) => console.log(res))
 
   await eos_evm_sdk.linkToken(4, 'EOS', 'eosio.token').then((res) => console.log(res))
 
