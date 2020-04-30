@@ -28,7 +28,7 @@ if (env === "mainnet") {
     contract: 'eosevm111111',
     tokenContract: 'eosio.token',
     tokenPrecision: 4,
-    tokenSymbol: 'EOS',
+    tokenSymbol: 'SYS',
     worker: 'eosevm11111d',
     ethPrivateKeys: {
       /// address : privateKey
@@ -57,7 +57,7 @@ if (env === "mainnet") {
     contract: 'eosevm111111',
     tokenContract: 'eosio.token',
     tokenPrecision: 4,
-    tokenSymbol: 'EOS',
+    tokenSymbol: 'SYS',
     worker: 'eosevm11111d',
     ethPrivateKeys: {
       /// address : privateKey
@@ -91,14 +91,14 @@ const sleep = (milliseconds) => {
 
 async function main () {
   /**
-   * test code
+   * example code
    * */
   const accountb = 'eosevm11111b'
   const accountc = 'eosevm11111c'
   const accountd = 'eosevm11111d'
-  const native_eth_address_b = '0xd81f4358cb8cab53d005e7f47c7ba3f5116000a6'
-  const native_eth_address_c = '0x39944247c2edf660d86d57764b58d83b8eee9014'
-  const native_eth_address_d = '0xe327e755438fbdf9e60891d9b752da10a38514d1'
+  const eos_non_associate_eth_address_b = '0xd81f4358cb8cab53d005e7f47c7ba3f5116000a6'
+  const eos_non_associate_eth_address_c = '0x39944247c2edf660d86d57764b58d83b8eee9014'
+  const eos_non_associate_eth_address_d = '0xe327e755438fbdf9e60891d9b752da10a38514d1'
   const eos_associate_eth_address_b = '0xf3c855f2988f7eabc4b4352bc5980825ebd8c3ef'
 
   const eos_evm_sdk = new Eos_evm_sdk(rpc, api, config)
@@ -108,7 +108,7 @@ async function main () {
   console.log('----------------------------------------------------------------------------------')
 
   console.log('------------------------------ link token  ------------------------------')
-  await eos_evm_sdk.linkToken(4, 'EOS', 'eosio.token').then((res) => console.log(res))
+  await eos_evm_sdk.linkToken(4, 'SYS', 'eosio.token').then((res) => console.log(res))
   console.log('----------------------------------------------------------------------------------')
 
   console.log('------------------------------ update auth ------------------------------')
@@ -119,20 +119,20 @@ async function main () {
   let account_eos_evm_b = new EOSEVMClient(rpc, api, config, accountb, '', '')
   // create associate EOS account ETH address
   await account_eos_evm_b.createAddress('aaaaaa').then((res) => console.log(res))
-  // create native ETH address
-  await account_eos_evm_b.createAddress(native_eth_address_b.slice(2)).then((res) => console.log(res))
+  // create eos_non_associate ETH address
+  await account_eos_evm_b.createAddress(eos_non_associate_eth_address_b.slice(2)).then((res) => console.log(res))
 
   let account_eos_evm_c = new EOSEVMClient(rpc, api, config, accountc, '', '')
   // create associate EOS account ETH address
   await account_eos_evm_c.createAddress('aaaaaa').then((res) => console.log(res))
-  // create native ETH address
-  await account_eos_evm_c.createAddress(native_eth_address_c.slice(2)).then((res) => console.log(res))
+  // create eos_non_associate ETH address
+  await account_eos_evm_c.createAddress(eos_non_associate_eth_address_c.slice(2)).then((res) => console.log(res))
 
   let account_eos_evm_d = new EOSEVMClient(rpc, api, config, accountd, '', '')
   // create associate EOS account ETH address
   await account_eos_evm_d.createAddress('aaaaaa').then((res) => console.log(res))
-  // create native ETH address
-  await account_eos_evm_d.createAddress(native_eth_address_d.slice(2)).then((res) => console.log(res))
+  // create eos_non_associate ETH address
+  await account_eos_evm_d.createAddress(eos_non_associate_eth_address_d.slice(2)).then((res) => console.log(res))
   console.log('----------------------------------------------------------------------------------')
 
   console.log('------------------------------ get all ETH address ------------------------------')
@@ -141,9 +141,9 @@ async function main () {
 
 
   console.log('------------------------------ create ERC20 ETH contract ------------------------------')
-  let account_eosevm11111b_native_eth = new EOSEVMClient(rpc, api, config, '', native_eth_address_b, '')
+  let account_eosevm11111b_eos_non_associate_eth = new EOSEVMClient(rpc, api, config, '', eos_non_associate_eth_address_b, '')
   let contract_address = ''
-  await account_eosevm11111b_native_eth.createContract([100000, 'first token', 4, 'SYS']).then(
+  await account_eosevm11111b_eos_non_associate_eth.createContract([100000, 'first token', 4, 'SYS']).then(
     res => {
       contract_address = `0x` + JSON.parse(res.processed.action_traces[0].console)["create address"]
       console.log(`contract address: ${contract_address}`)
@@ -153,66 +153,80 @@ async function main () {
 
   ///('------------------------------ construct ETH address object ------------------------------')
   const account_eosevm11111b_eos_associate = new EOSEVMClient(rpc, api, config, accountb, eos_associate_eth_address_b, '')
-  account_eosevm11111b_native_eth = new EOSEVMClient(rpc, api, config, '', native_eth_address_b, contract_address)
+  account_eosevm11111b_eos_non_associate_eth = new EOSEVMClient(rpc, api, config, '', eos_non_associate_eth_address_b, contract_address)
 
-  const account_eosevm11111c_native_eth = new EOSEVMClient(rpc, api, config, '', native_eth_address_c, contract_address)
+  const account_eosevm11111c_eos_non_associate_eth = new EOSEVMClient(rpc, api, config, '', eos_non_associate_eth_address_c, contract_address)
 
-  const account_eosevm11111d_native_eth = new EOSEVMClient(rpc, api, config, '', native_eth_address_d, contract_address)
+  const account_eosevm11111d_eos_non_associate_eth = new EOSEVMClient(rpc, api, config, '', eos_non_associate_eth_address_d, contract_address)
 
   await sleep(1000)
 
   console.log('------------------------------ ERC20 token transfer ------------------------------')
-  await account_eosevm11111b_native_eth.ERC20Transfer(native_eth_address_c, 100).then(
+  await account_eosevm11111b_eos_non_associate_eth.ERC20Transfer(eos_non_associate_eth_address_c, 100).then(
     res => console.log(res)
   )
   console.log('----------------------------------------------------------------------------------')
 
   await sleep(500)
 
-  console.log('------------------------------ Balance of native_eth_address_c ------------------------------')
-  await account_eosevm11111c_native_eth.ERC20BalanceOf().then(res => console.log(res))
+  console.log('------------------------------ Balance of eos_non_associate_eth_address_c ------------------------------')
+  await account_eosevm11111c_eos_non_associate_eth.ERC20BalanceOf().then(res => console.log(res))
   console.log('----------------------------------------------------------------------------------')
 
   console.log('------------------------------ ERC20 token transfer ------------------------------')
-  await account_eosevm11111b_native_eth.ERC20Transfer(native_eth_address_d, 500).then(
+  await account_eosevm11111b_eos_non_associate_eth.ERC20Transfer(eos_non_associate_eth_address_d, 500).then(
     res => console.log(res)
   )
   console.log('----------------------------------------------------------------------------------')
 
-  console.log('------------------------------ Balance of native_eth_address_d ------------------------------')
-  await account_eosevm11111d_native_eth.ERC20BalanceOf().then(res => console.log(res))
+  console.log('------------------------------ Balance of eos_non_associate_eth_address_d ------------------------------')
+  await account_eosevm11111d_eos_non_associate_eth.ERC20BalanceOf().then(res => console.log(res))
   console.log('----------------------------------------------------------------------------------')
 
   console.log('------------------------------ ERC20 token Approve ------------------------------')
-  await account_eosevm11111d_native_eth.ERC20Approve(native_eth_address_c, 200).then(res => console.log(res))
+  await account_eosevm11111d_eos_non_associate_eth.ERC20Approve(eos_non_associate_eth_address_c, 200).then(res => console.log(res))
   console.log('----------------------------------------------------------------------------------')
 
   console.log('------------------------------ ERC20 token allowance ------------------------------')
-  await account_eosevm11111d_native_eth.ERC20Allowance(native_eth_address_c).then(res => console.log(res))
+  await account_eosevm11111d_eos_non_associate_eth.ERC20Allowance(eos_non_associate_eth_address_c).then(res => console.log(res))
   console.log('----------------------------------------------------------------------------------')
 
   console.log('------------------------------ ERC20 token transfer from ------------------------------')
-  await account_eosevm11111c_native_eth.ERC20TransferFrom(native_eth_address_d,
-    native_eth_address_c, 20).then(res => console.log(res))
+  await account_eosevm11111c_eos_non_associate_eth.ERC20TransferFrom(eos_non_associate_eth_address_d,
+    eos_non_associate_eth_address_c, 20).then(res => console.log(res))
   console.log('----------------------------------------------------------------------------------')
 
-  console.log('------------------------------ Balance of native_eth_address_c ------------------------------')
-  await account_eosevm11111c_native_eth.ERC20BalanceOf().then(res => console.log(res))
+  console.log('------------------------------ Balance of eos_non_associate_eth_address_c ------------------------------')
+  await account_eosevm11111c_eos_non_associate_eth.ERC20BalanceOf().then(res => console.log(res))
   console.log('----------------------------------------------------------------------------------')
 
-  console.log('------------------------------ deposit native_eth_address_c ------------------------------')
-  await account_eosevm11111b_eos_associate.deposit('0.0010 EOS').then((res) => console.log(res))
+  console.log('------------------------------ deposit eos_non_associate_eth_address_c ------------------------------')
+  await account_eosevm11111b_eos_associate.deposit('0.0010 SYS').then((res) => console.log(res))
   console.log('----------------------------------------------------------------------------------')
 
-  console.log('------------------------------ get balance native_eth_address_c ------------------------------')
+  console.log('------------------------------ get balance eos_associate_eth_address_b ------------------------------')
   await account_eosevm11111b_eos_associate.getBalance().then((balance) => console.log(`balance: ${balance}`))
   console.log('----------------------------------------------------------------------------------')
 
-  console.log('------------------------------ withdraw native_eth_address_c ------------------------------')
-  await account_eosevm11111b_eos_associate.withdraw('0.0010 EOS').then((res) => console.log(res))
+  console.log('------------------------------ transfer 1 WEI to eos_non_associate_eth_address_c ------------------------------')
+  await account_eosevm11111b_eos_associate.transfer(eos_non_associate_eth_address_c, 1).then((res) => console.log(res))
+  console.log('-------------------------------------------------------------------------------------')
+
+
+  console.log('------------------------------ after balance transfer  ------------------------------')
+  console.log('------------------------------ get balance eos_associate_eth_address_b ------------------------------')
+  await account_eosevm11111b_eos_associate.getBalance().then((balance) => console.log(`balance: ${balance}`))
   console.log('----------------------------------------------------------------------------------')
 
-  console.log('------------------------------ get balance native_eth_address_c ------------------------------')
+  console.log('------------------------------ get balance eos_non_associate_eth_address_c ------------------------------')
+  await account_eosevm11111c_eos_non_associate_eth.getBalance().then((balance) => console.log(`balance: ${balance}`))
+  console.log('----------------------------------------------------------------------------------')
+
+  console.log('------------------------------ withdraw eos_non_associate_eth_address_b ------------------------------')
+  await account_eosevm11111b_eos_associate.withdraw('0.0001 SYS').then((res) => console.log(res))
+  console.log('----------------------------------------------------------------------------------')
+
+  console.log('------------------------------ get balance eos_non_associate_eth_address_b ------------------------------')
   await account_eosevm11111b_eos_associate.getBalance().then((balance) => console.log(`balance: ${balance}`))
   console.log('----------------------------------------------------------------------------------')
 }
