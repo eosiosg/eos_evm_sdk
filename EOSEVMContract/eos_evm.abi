@@ -17,16 +17,6 @@
     ],
     "structs": [
         {
-            "name": "clearstate",
-            "base": "",
-            "fields": [
-                {
-                    "name": "scope",
-                    "type": "uint8"
-                }
-            ]
-        },
-        {
             "name": "create",
             "base": "",
             "fields": [
@@ -145,44 +135,6 @@
             ]
         },
         {
-            "name": "rawtest",
-            "base": "",
-            "fields": [
-                {
-                    "name": "address",
-                    "type": "string"
-                },
-                {
-                    "name": "caller",
-                    "type": "string"
-                },
-                {
-                    "name": "code",
-                    "type": "hex_code"
-                },
-                {
-                    "name": "data",
-                    "type": "string"
-                },
-                {
-                    "name": "gas",
-                    "type": "string"
-                },
-                {
-                    "name": "gasPrice",
-                    "type": "string"
-                },
-                {
-                    "name": "origin",
-                    "type": "string"
-                },
-                {
-                    "name": "value",
-                    "type": "string"
-                }
-            ]
-        },
-        {
             "name": "simulate",
             "base": "",
             "fields": [
@@ -289,11 +241,6 @@
     ],
     "actions": [
         {
-            "name": "clearstate",
-            "type": "clearstate",
-            "ricardian_contract": ""
-        },
-        {
             "name": "create",
             "type": "create",
             "ricardian_contract": ""
@@ -311,11 +258,6 @@
         {
             "name": "raw",
             "type": "raw",
-            "ricardian_contract": ""
-        },
-        {
-            "name": "rawtest",
-            "type": "rawtest",
             "ricardian_contract": ""
         },
         {
