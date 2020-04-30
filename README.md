@@ -1,6 +1,12 @@
 # eos_evm_sdk
 EOS EVM js client
 
+## Install dependency packages
+```bash
+npm install ethereumjs-tx --save 
+npm install web3 --save
+yarn add eosjs
+```
 
 ## Construct EOSEVMClient
 ```js
