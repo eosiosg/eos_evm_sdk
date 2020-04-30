@@ -76,7 +76,7 @@ class Eos_evm_sdk {
           expireSeconds: 30,
         })
     } catch (e) {
-      throw new Error(`set contract exception ${e}`)
+      // throw new Error(`set contract exception ${e}`)
     }
   }
 

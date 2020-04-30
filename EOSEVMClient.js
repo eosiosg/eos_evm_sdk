@@ -216,11 +216,11 @@ class EOSEVMClient extends Eos_evm_sdk {
     }
   }
 
-  async ERC20TransferFrom (to, value) {
+  async ERC20TransferFrom (from, to, value) {
     try {
       return await this.call(
         'transferFrom',
-        [this.eth_address, to, value],
+        [from, to, value],
         false
       ).then((res) => {
         return res.processed.action_traces[0].console

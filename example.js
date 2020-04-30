@@ -94,31 +94,36 @@ async function main () {
 
   console.log('------------------------------ set contract address ------------------------------')
   await eos_evm_sdk.setContract().then((res) => console.log(res))
+  console.log('----------------------------------------------------------------------------------')
 
   console.log('------------------------------ link token  ------------------------------')
   await eos_evm_sdk.linkToken(4, 'EOS', 'eosio.token').then((res) => console.log(res))
+  console.log('----------------------------------------------------------------------------------')
 
   console.log('------------------------------ update auth ------------------------------')
-  await eos_evm_sdk.updateAuth().then(res => console.log(res));
+  await eos_evm_sdk.updateAuth().then(res => console.log(res))
+  console.log('----------------------------------------------------------------------------------')
 
   console.log('------------------------------ create ETH address ------------------------------')
   let account_eos_evm_b = new EOSEVMClient(rpc, api, config, 'eosevm11111b', '', '')
-  await account_eos_evm_b.createAddress('aaaaaa').then((res) => console.log(${res}))
+  await account_eos_evm_b.createAddress('aaaaaa').then((res) => console.log(res))
   // create native ETH address
-  await account_eos_evm_b.createAddress('d81f4358cb8cab53d005e7f47c7ba3f5116000a6').then((res) => console.log(${res}))
+  await account_eos_evm_b.createAddress('d81f4358cb8cab53d005e7f47c7ba3f5116000a6').then((res) => console.log(res))
 
   let account_eos_evm_c = new EOSEVMClient(rpc, api, config, 'eosevm11111c', '', '')
-  await account_eos_evm_c.createAddress('aaaaaa').then((res) => console.log(${res}))
+  await account_eos_evm_c.createAddress('aaaaaa').then((res) => console.log(res))
   // create native ETH address
-  await account_eos_evm_c.createAddress('39944247c2edf660d86d57764b58d83b8eee9014').then((res) => console.log(${res}))
+  await account_eos_evm_c.createAddress('39944247c2edf660d86d57764b58d83b8eee9014').then((res) => console.log(res))
 
   let account_eos_evm_d = new EOSEVMClient(rpc, api, config, 'eosevm11111d', '', '')
-  await account_eos_evm_d.createAddress('aaaaaa').then((res) => console.log(${res}))
+  await account_eos_evm_d.createAddress('aaaaaa').then((res) => console.log(res))
   // create native ETH address
-  await account_eos_evm_d.createAddress('e327e755438fbdf9e60891d9b752da10a38514d1').then((res) => console.log(${res}))
+  await account_eos_evm_d.createAddress('e327e755438fbdf9e60891d9b752da10a38514d1').then((res) => console.log(res))
+  console.log('----------------------------------------------------------------------------------')
 
   console.log('------------------------------ get all ETH address ------------------------------')
-  await account_eos_evm_c.getAllAccounts().then((res) => console.log(${res}))
+  await account_eos_evm_c.getAllAccounts().then((res) => console.log(res))
+  console.log('----------------------------------------------------------------------------------')
 
 
   console.log('------------------------------ create ERC20 ETH contract ------------------------------')
@@ -130,8 +135,9 @@ async function main () {
       console.log(`contract address: ${contract_address}`)
     }
   )
+  console.log('----------------------------------------------------------------------------------')
 
-  console.log('------------------------------ construct ETH address object ------------------------------')
+  ///('------------------------------ construct ETH address object ------------------------------')
   const account_eosevm11111b_eos = new EOSEVMClient(rpc, api, config, 'eosevm11111b', '0xf3c855f2988f7eabc4b4352bc5980825ebd8c3ef', '')
   account_eosevm11111b_raw_eth = new EOSEVMClient(rpc, api, config, '', '0xd81f4358cb8cab53d005e7f47c7ba3f5116000a6', contract_address)
 
@@ -141,32 +147,42 @@ async function main () {
   const account_eosevm11111d_eos = new EOSEVMClient(rpc, api, config, 'eosevm11111d', '0x8c68f5c66628480dd2c2323a7c972fda099900cc', '')
   const account_eosevm11111d_raw_eth = new EOSEVMClient(rpc, api, config, '', '0xe327e755438fbdf9e60891d9b752da10a38514d1', contract_address)
 
-
-  await account_eosevm11111b_raw_eth.ERC20Transfer('0x46051cfbfd3453f72565818a6b3e0a155a804330', 1).then(
+  console.log('------------------------------ ERC20 token transfer ------------------------------')
+  await account_eosevm11111b_raw_eth.ERC20Transfer('0x39944247c2edf660d86d57764b58d83b8eee9014', 100).then(
     res => console.log(res.processed.action_traces[0].console)
   )
+  console.log('----------------------------------------------------------------------------------')
 
-  await account_eosevm11111b_eos.deposit('0.0010 EOS').then((res) => console.log(res))
-  await account_eosevm11111b_raw_eth.getNonce().then((res) => console.log(`nonce: ${res}`))
-  await account_eosevm11111b_eos.transfer('0xd81f4358cb8cab53d005e7f47c7ba3f5116000a6', 1000000).then((res) => console.log(res))
-  await account_eosevm11111b_eos.getBalance().then((balance) => console.log(`balance: ${balance}`))
-  await account_eosevm11111b_raw_eth.transfer('0x39944247c2edf660d86d57764b58d83b8eee9014', 20).then((res) => console.log(res))
-  await account_eosevm11111b_raw_eth.ERC20TotalSupply().then((res) => console.log(res))
-  await account_eosevm11111b_raw_eth.ERC20Symbol().then((res) => console.log(res))
-  await account_eosevm11111b_raw_eth.ERC20Transfer('0x46051cfbfd3453f72565818a6b3e0a155a804330', 1).then(
-    res => console.log(res)
+  console.log('------------------------------ Balance of 0x39944247c2edf660d86d57764b58d83b8eee9014 ------------------------------')
+  await account_eosevm11111c_raw_eth.ERC20BalanceOf().then(res => console.log(res))
+  console.log('----------------------------------------------------------------------------------')
+
+  console.log('------------------------------ ERC20 token transfer ------------------------------')
+  await account_eosevm11111b_raw_eth.ERC20Transfer('0xe327e755438fbdf9e60891d9b752da10a38514d1', 500).then(
+    res => console.log(res.processed.action_traces[0].console)
   )
-  await account_eosevm11111b_raw_eth.ERC20BalanceOf().then(res => console.log(res))
-  await account_eosevm11111b_raw_eth.ERC20Symbol().then(res => console.log(res))
-  await account_eosevm11111b_raw_eth.ERC20TotalSupply().then(res => console.log(res))
-  await account_eosevm11111b_raw_eth.ERC20Decimals().then(res => console.log(res))
+  console.log('----------------------------------------------------------------------------------')
 
-  await account_eosevm11111b_raw_eth.ERC20Approve('0x39944247c2edf660d86d57764b58d83b8eee9014', 10).then(res => console.log(res))
-  await account_eosevm11111b_raw_eth.ERC20Allowance('0x39944247c2edf660d86d57764b58d83b8eee9014').then(res => console.log(res))
-  await account_eosevm11111b_raw_eth.ERC20TransferFrom('0x39944247c2edf660d86d57764b58d83b8eee9014', 1,).then(res => console.log(res))
-  await account_eosevm11111b_raw_eth.call('transfer',
-    ['0x46051cfbfd3453f72565818a6b3e0a155a804330', 1],
-    false
-  ).then((res) => console.log(res))
+  console.log('------------------------------ Balance of 0xe327e755438fbdf9e60891d9b752da10a38514d1 ------------------------------')
+  await account_eosevm11111d_raw_eth.ERC20BalanceOf().then(res => console.log(res))
+  console.log('----------------------------------------------------------------------------------')
+
+  console.log('------------------------------ ERC20 token Approve ------------------------------')
+  await account_eosevm11111d_raw_eth.ERC20Approve('0x39944247c2edf660d86d57764b58d83b8eee9014', 200).then(res => console.log(res))
+  console.log('----------------------------------------------------------------------------------')
+
+  console.log('------------------------------ ERC20 token allowance ------------------------------')
+  await account_eosevm11111d_raw_eth.ERC20Allowance('0x39944247c2edf660d86d57764b58d83b8eee9014').then(res => console.log(res))
+  console.log('----------------------------------------------------------------------------------')
+
+  console.log('------------------------------ ERC20 token transfer from ------------------------------')
+  await account_eosevm11111c_raw_eth.ERC20TransferFrom('0xe327e755438fbdf9e60891d9b752da10a38514d1',
+    '0x39944247c2edf660d86d57764b58d83b8eee9014', 20).then(res => console.log(res))
+  console.log('----------------------------------------------------------------------------------')
+
+  console.log('------------------------------ Balance of 0x39944247c2edf660d86d57764b58d83b8eee9014 ------------------------------')
+  await account_eosevm11111c_raw_eth.ERC20BalanceOf().then(res => console.log(res))
+  console.log('----------------------------------------------------------------------------------')
 }
+
 main()
