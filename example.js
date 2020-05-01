@@ -201,7 +201,7 @@ async function main () {
   })
 
   console.log('------------------------------ ERC20 transfer state change summary ------------------------------')
-  console.log(`ERC20 token transfer from eos_non_associate_eth_address_b to  eos_non_associate_eth_address_c 0.0010 ERC`)
+  console.log(`ERC20 token transfer from eos_non_associate_eth_address_b to  eos_non_associate_eth_address_c 0.01 ERC`)
   console.log(`before ERC20 balanceof_eos_non_associate_eth_address_b: ${before_balanceof_eos_non_associate_eth_address_b}`)
   console.log(`after ERC20 balanceof_eos_non_associate_eth_address_b: ${after_balanceof_eos_non_associate_eth_address_b}`)
   console.log(`before ERC20 balanceof_eos_non_associate_eth_address_c: ${before_balanceof_eos_non_associate_eth_address_c}`)
@@ -239,7 +239,7 @@ async function main () {
   })
 
   console.log('------------------------------ ERC20 transfer state change summary ------------------------------')
-  console.log(`ERC20 token transfer from eos_non_associate_eth_address_b to  eos_non_associate_eth_address_c 0.0010 ERC`)
+  console.log(`ERC20 token transfer from eos_non_associate_eth_address_b to  eos_non_associate_eth_address_c 0.05 ERC`)
   console.log(`before ERC20 balanceof_eos_non_associate_eth_address_b: ${before_balanceof_eos_non_associate_eth_address_b}`)
   console.log(`after ERC20 balanceof_eos_non_associate_eth_address_b: ${after_balanceof_eos_non_associate_eth_address_b}`)
   console.log(`before ERC20 balanceof_eos_non_associate_eth_address_d: ${before_balanceof_eos_non_associate_eth_address_d}`)
