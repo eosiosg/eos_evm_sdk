@@ -3,6 +3,7 @@ const { Api, JsonRpc, RpcError } = require('eosjs')
 const { JsSignatureProvider } = require('eosjs/dist/eosjs-jssig')      // development only
 
 const fetch = require('node-fetch')
+const sleep = require('await-sleep')
 const { TextEncoder, TextDecoder } = require('util')                   // node only; native TextEncoder/Decoder
 
 const EOSEVMClient = require('./EOSEVMClient')
@@ -85,9 +86,6 @@ const rpc = new JsonRpc(config.endpoint, { fetch })
 
 const api = new Api({ rpc, signatureProvider, textDecoder: new TextDecoder(), textEncoder: new TextEncoder() })
 
-const sleep = (milliseconds) => {
-  return new Promise(resolve => setTimeout(resolve, milliseconds))
-}
 
 async function main () {
   /**
