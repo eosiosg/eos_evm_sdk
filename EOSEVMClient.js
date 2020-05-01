@@ -71,10 +71,11 @@ class EOSEVMClient extends Eos_evm_sdk {
    * @method ERC20Transfer
    * @for  Eos_evm_sdk
    * @param {string} to: eth address
-   * @param {int} amount
+   * @param {number} amount
    * */
   async ERC20Transfer (to, amount) {
     try {
+      amount = amount * Math.pow(10, await this.ERC20Decimals())
       return await this.call(
         'transfer',
         [to, amount],
@@ -103,13 +104,15 @@ class EOSEVMClient extends Eos_evm_sdk {
         return res.processed.action_traces[0].console
       })
     } catch (e) {
-      
 
       if (e instanceof RpcError) {
         let pending_size = "pending console output: ".length
         let json_response = e.json.error.details[1].message.slice(pending_size)
         let balance = web3.utils.hexToNumber('0x' + JSON.parse(json_response).output)
-        return `${this.eth_address} balance: ${balance}`
+        let symbol = await this.ERC20Symbol()
+        let precision = await this.ERC20Decimals()
+        balance = parseFloat(balance) / Math.pow(10, precision)
+        return `${this.eth_address} balance: ${balance} ${symbol}`
       }
     }
   }
@@ -152,8 +155,8 @@ class EOSEVMClient extends Eos_evm_sdk {
       if (e instanceof RpcError) {
         let pending_size = "pending console output: ".length
         let json_response = e.json.error.details[1].message.slice(pending_size)
-        let symbol = web3.utils.hexToUtf8('0x' + JSON.parse(json_response).output)
-        return `symbol : ${symbol}`
+        let symbol = web3.utils.hexToString('0x' + JSON.parse(json_response).output).slice(32)
+        return `${symbol}`
       }
     }
   }
@@ -173,13 +176,14 @@ class EOSEVMClient extends Eos_evm_sdk {
         let pending_size = "pending console output: ".length
         let json_response = e.json.error.details[1].message.slice(pending_size)
         let decimal = web3.utils.hexToNumber('0x' + JSON.parse(json_response).output)
-        return `decimal: ${decimal}`
+        return `${decimal}`
       }
     }
   }
 
   async ERC20Approve (spender, amount) {
     try {
+      amount = amount * Math.pow(10, await this.ERC20Decimals())
       return await this.call(
         'approve',
         [spender, amount],
@@ -210,14 +214,16 @@ class EOSEVMClient extends Eos_evm_sdk {
       if (e instanceof RpcError) {
         let pending_size = "pending console output: ".length
         let json_response = e.json.error.details[1].message.slice(pending_size)
-        let allowance = web3.utils.hexToNumber('0x' + JSON.parse(json_response).output)
-        return `allowance for spender ${spender} amount ${allowance}`
+        let allowance = web3.utils.hexToNumber('0x' + JSON.parse(json_response).output) / Math.pow(10, await this.ERC20Decimals())
+        let symbol = await this.ERC20Symbol()
+        return `allowance for spender ${spender} amount ${allowance} ${symbol}`
       }
     }
   }
 
   async ERC20TransferFrom (from, to, value) {
     try {
+      value = value * Math.pow(10, await this.ERC20Decimals())
       return await this.call(
         'transferFrom',
         [from, to, value],
