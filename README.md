@@ -43,12 +43,12 @@ const api = new Api({ rpc, signatureProvider, textDecoder: new TextDecoder(), te
 ```
 
 ## Functions
-### setContract
-   * @method setContract
+### depolyEosEvm
+   * @method depolyEosEvm
    * @for  Eos_evm_sdk
    * link token as native token in account table
    ```js
-   await eos_evm_sdk.setContract().then((res) => console.log(res))
+   await eos_evm_sdk.depolyEosEvm().then((res) => console.log(res))
    ```
 ### updateAuth
    * @method updateAuth

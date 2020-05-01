@@ -101,8 +101,8 @@ async function main () {
 
   const eos_evm_sdk = new Eos_evm_sdk(rpc, api, config)
 
-  console.log('------------------------------ set contract address ------------------------------')
-  await eos_evm_sdk.setContract().then((res) => console.log(res))
+  console.log('------------------------------ depolyEosEvm --------------------------------------')
+  await eos_evm_sdk.depolyEosEvm().then((res) => console.log(res))
   console.log('----------------------------------------------------------------------------------')
 
   console.log('------------------------------ link token  ------------------------------')
@@ -229,7 +229,7 @@ async function main () {
   after_balanceof_eos_non_associate_eth_address_b = 0
   await account_eosevm11111b_eos_non_associate_eth.ERC20BalanceOf().then(balance => {
     balance = parseFloat(balance) / Math.pow(10, precision)
-    before_balanceof_eos_non_associate_eth_address_b = `${balance} ${symbol}`
+    after_balanceof_eos_non_associate_eth_address_b = `${balance} ${symbol}`
   })
 
   let after_balanceof_eos_non_associate_eth_address_d = 0
