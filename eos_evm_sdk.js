@@ -530,7 +530,7 @@ class Eos_evm_sdk {
     if (!accountInfo.rows.length) {
       throw new Error(`no such account ${eth_address}`)
     }
-    return `${parseFloat((parseInt(accountInfo.rows[0].balance, 16) / Math.pow(10, 14)).toString()) / Math.pow(10, this.config.tokenPrecision)} ${this.config.tokenSymbol}`
+    return `${parseFloat((parseInt(accountInfo.rows[0].balance, 16) / Math.pow(10, 18)).toString())} ${this.config.tokenSymbol}`
   }
 
   /** deployContract
