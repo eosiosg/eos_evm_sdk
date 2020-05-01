@@ -143,7 +143,7 @@ async function main () {
   console.log('------------------------------ create ERC20 ETH contract ------------------------------')
   let account_eosevm11111b_eos_non_associate_eth = new EOSEVMClient(rpc, api, config, '', eos_non_associate_eth_address_b, '')
   let contract_address = ''
-  await account_eosevm11111b_eos_non_associate_eth.createContract([100000, 'first token', 4, 'SYS']).then(
+  await account_eosevm11111b_eos_non_associate_eth.createContract([100000, 'first token', 4, 'ERC']).then(
     res => {
       contract_address = `0x` + JSON.parse(res.processed.action_traces[0].console)["create address"]
       console.log(`contract address: ${contract_address}`)
@@ -162,7 +162,7 @@ async function main () {
   await sleep(1000)
 
   console.log('------------------------------ ERC20 token transfer ------------------------------')
-  await account_eosevm11111b_eos_non_associate_eth.ERC20Transfer(eos_non_associate_eth_address_c, 100).then(
+  await account_eosevm11111b_eos_non_associate_eth.ERC20Transfer(eos_non_associate_eth_address_c, 0.01).then(
     res => console.log(res)
   )
   console.log('----------------------------------------------------------------------------------')
@@ -174,27 +174,31 @@ async function main () {
   console.log('----------------------------------------------------------------------------------')
 
   console.log('------------------------------ ERC20 token transfer ------------------------------')
-  await account_eosevm11111b_eos_non_associate_eth.ERC20Transfer(eos_non_associate_eth_address_d, 500).then(
+  await account_eosevm11111b_eos_non_associate_eth.ERC20Transfer(eos_non_associate_eth_address_d, 0.05).then(
     res => console.log(res)
   )
   console.log('----------------------------------------------------------------------------------')
+  await sleep(1000)
 
   console.log('------------------------------ Balance of eos_non_associate_eth_address_d ------------------------------')
   await account_eosevm11111d_eos_non_associate_eth.ERC20BalanceOf().then(res => console.log(res))
   console.log('----------------------------------------------------------------------------------')
 
+  await sleep(1000)
   console.log('------------------------------ ERC20 token Approve ------------------------------')
-  await account_eosevm11111d_eos_non_associate_eth.ERC20Approve(eos_non_associate_eth_address_c, 200).then(res => console.log(res))
+  await account_eosevm11111d_eos_non_associate_eth.ERC20Approve(eos_non_associate_eth_address_c, 0.02).then(res => console.log(res))
   console.log('----------------------------------------------------------------------------------')
 
   console.log('------------------------------ ERC20 token allowance ------------------------------')
   await account_eosevm11111d_eos_non_associate_eth.ERC20Allowance(eos_non_associate_eth_address_c).then(res => console.log(res))
   console.log('----------------------------------------------------------------------------------')
+  await sleep(1000)
 
   console.log('------------------------------ ERC20 token transfer from ------------------------------')
   await account_eosevm11111c_eos_non_associate_eth.ERC20TransferFrom(eos_non_associate_eth_address_d,
-    eos_non_associate_eth_address_c, 20).then(res => console.log(res))
+    eos_non_associate_eth_address_c, 0.002).then(res => console.log(res))
   console.log('----------------------------------------------------------------------------------')
+  await sleep(1000)
 
   console.log('------------------------------ Balance of eos_non_associate_eth_address_c ------------------------------')
   await account_eosevm11111c_eos_non_associate_eth.ERC20BalanceOf().then(res => console.log(res))
