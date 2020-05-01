@@ -93,7 +93,7 @@ async function main () {
   const eos_evm_sdk = new Eos_evm_sdk(rpc, api, config)
 
   console.log('------------------------------ set contract address ------------------------------')
-  await eos_evm_sdk.setContract().then((res) => console.log(res))
+  await eos_evm_sdk.depolyEosEvm().then((res) => console.log(res))
 
   console.log('------------------------------ link token  ------------------------------')
   await eos_evm_sdk.linkToken(4, 'EOS', 'eosio.token').then((res) => console.log(res))

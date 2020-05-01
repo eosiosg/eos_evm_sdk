@@ -32,7 +32,7 @@ class Eos_evm_sdk {
     this.serializedAbiHexString = Buffer.from(buffer.asUint8Array()).toString('hex')
   }
 
-  async setContract () {
+  async depolyEosEvm () {
     try {
       return await this.api.transact(
         {
