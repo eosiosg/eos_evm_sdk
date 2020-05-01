@@ -109,10 +109,8 @@ class EOSEVMClient extends Eos_evm_sdk {
         let pending_size = "pending console output: ".length
         let json_response = e.json.error.details[1].message.slice(pending_size)
         let balance = web3.utils.hexToNumber('0x' + JSON.parse(json_response).output)
-        let symbol = await this.ERC20Symbol()
-        let precision = await this.ERC20Decimals()
-        balance = parseFloat(balance) / Math.pow(10, precision)
-        return `${this.eth_address} balance: ${balance} ${symbol}`
+        // balance = parseFloat(balance) / Math.pow(10, precision)
+        return balance
       }
     }
   }

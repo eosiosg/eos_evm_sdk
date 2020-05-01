@@ -140,10 +140,11 @@ async function main () {
   console.log('----------------------------------------------------------------------------------')
 
 
+  await sleep(1000)
   console.log('------------------------------ create ERC20 ETH contract ------------------------------')
-  let account_eosevm11111b_eos_non_associate_eth = new EOSEVMClient(rpc, api, config, '', eos_non_associate_eth_address_b, '')
+  let account_eosevm11111b_create_contract = new EOSEVMClient(rpc, api, config, '', eos_non_associate_eth_address_b, '')
   let contract_address = ''
-  await account_eosevm11111b_eos_non_associate_eth.createContract([100000, 'first token', 4, 'ERC']).then(
+  await account_eosevm11111b_create_contract.createContract([100000, 'first token', 4, 'ERC']).then(
     res => {
       contract_address = `0x` + JSON.parse(res.processed.action_traces[0].console)["create address"]
       console.log(`contract address: ${contract_address}`)
@@ -152,39 +153,102 @@ async function main () {
   console.log('----------------------------------------------------------------------------------')
 
   ///('------------------------------ construct ETH address object ------------------------------')
-  const account_eosevm11111b_eos_associate = new EOSEVMClient(rpc, api, config, accountb, eos_associate_eth_address_b, '')
-  account_eosevm11111b_eos_non_associate_eth = new EOSEVMClient(rpc, api, config, '', eos_non_associate_eth_address_b, contract_address)
+  const account_eosevm11111b_eos_associate = new EOSEVMClient(rpc, api, config, accountb, eos_associate_eth_address_b, contract_address)
+  const account_eosevm11111b_eos_non_associate_eth = new EOSEVMClient(rpc, api, config, '', eos_non_associate_eth_address_b, contract_address)
 
   const account_eosevm11111c_eos_non_associate_eth = new EOSEVMClient(rpc, api, config, '', eos_non_associate_eth_address_c, contract_address)
 
   const account_eosevm11111d_eos_non_associate_eth = new EOSEVMClient(rpc, api, config, '', eos_non_associate_eth_address_d, contract_address)
 
+  let symbol = ''
+  let precision = 0
+  await account_eosevm11111b_eos_non_associate_eth.ERC20Symbol().then(sym => {
+    symbol = sym
+  })
+  await account_eosevm11111b_eos_non_associate_eth.ERC20Decimals().then(pre => {
+    precision = pre
+  })
+
   await sleep(1000)
 
-  console.log('------------------------------ ERC20 token transfer ------------------------------')
+  console.log('------------------------------ ERC20 token transfer from eos_non_associate_eth_address_b to  eos_non_associate_eth_address_c ------------------------------')
+
+  let before_balanceof_eos_non_associate_eth_address_b = 0
+  await account_eosevm11111b_eos_non_associate_eth.ERC20BalanceOf().then(balance => {
+    balance = parseFloat(balance) / Math.pow(10, precision)
+    before_balanceof_eos_non_associate_eth_address_b = `${balance} ${symbol}`
+  })
+
+  let before_balanceof_eos_non_associate_eth_address_c = 0
+  await account_eosevm11111c_eos_non_associate_eth.ERC20BalanceOf().then(balance => {
+    balance = parseFloat(balance) / Math.pow(10, precision)
+    before_balanceof_eos_non_associate_eth_address_c = `${balance} ${symbol}`
+  })
+
   await account_eosevm11111b_eos_non_associate_eth.ERC20Transfer(eos_non_associate_eth_address_c, 0.01).then(
     res => console.log(res)
   )
-  console.log('----------------------------------------------------------------------------------')
+  await sleep(1000)
 
-  await sleep(500)
+  let after_balanceof_eos_non_associate_eth_address_b = 0
+  await account_eosevm11111b_eos_non_associate_eth.ERC20BalanceOf().then(balance => {
+    balance = parseFloat(balance) / Math.pow(10, precision)
+    after_balanceof_eos_non_associate_eth_address_b = `${balance} ${symbol}`
+  })
 
-  console.log('------------------------------ Balance of eos_non_associate_eth_address_c ------------------------------')
-  await account_eosevm11111c_eos_non_associate_eth.ERC20BalanceOf().then(res => console.log(res))
-  console.log('----------------------------------------------------------------------------------')
+  let after_balanceof_eos_non_associate_eth_address_c = 0
+  await account_eosevm11111c_eos_non_associate_eth.ERC20BalanceOf().then(balance => {
+    balance = parseFloat(balance) / Math.pow(10, precision)
+    after_balanceof_eos_non_associate_eth_address_c = `${balance} ${symbol}`
+  })
 
-  console.log('------------------------------ ERC20 token transfer ------------------------------')
+  console.log('------------------------------ ERC20 transfer state change summary ------------------------------')
+  console.log(`ERC20 token transfer from eos_non_associate_eth_address_b to  eos_non_associate_eth_address_c 0.0010 ERC`)
+  console.log(`before ERC20 balanceof_eos_non_associate_eth_address_b: ${before_balanceof_eos_non_associate_eth_address_b}`)
+  console.log(`after ERC20 balanceof_eos_non_associate_eth_address_b: ${after_balanceof_eos_non_associate_eth_address_b}`)
+  console.log(`before ERC20 balanceof_eos_non_associate_eth_address_c: ${before_balanceof_eos_non_associate_eth_address_c}`)
+  console.log(`after ERC20 balanceof_eos_non_associate_eth_address_c: ${after_balanceof_eos_non_associate_eth_address_c}`)
+
+
+  console.log('------------------------------ ERC20 token transfer from eos_non_associate_eth_address_b to  eos_non_associate_eth_address_d ------------------------------')
+
+  before_balanceof_eos_non_associate_eth_address_b = 0
+  await account_eosevm11111b_eos_non_associate_eth.ERC20BalanceOf().then(balance => {
+    balance = parseFloat(balance) / Math.pow(10, precision)
+    before_balanceof_eos_non_associate_eth_address_b = `${balance} ${symbol}`
+  })
+
+  let before_balanceof_eos_non_associate_eth_address_d = 0
+  await account_eosevm11111d_eos_non_associate_eth.ERC20BalanceOf().then(balance => {
+    balance = parseFloat(balance) / Math.pow(10, precision)
+    before_balanceof_eos_non_associate_eth_address_d = `${balance} ${symbol}`
+  })
+
   await account_eosevm11111b_eos_non_associate_eth.ERC20Transfer(eos_non_associate_eth_address_d, 0.05).then(
     res => console.log(res)
   )
-  console.log('----------------------------------------------------------------------------------')
+
+  after_balanceof_eos_non_associate_eth_address_b = 0
+  await account_eosevm11111b_eos_non_associate_eth.ERC20BalanceOf().then(balance => {
+    balance = parseFloat(balance) / Math.pow(10, precision)
+    before_balanceof_eos_non_associate_eth_address_b = `${balance} ${symbol}`
+  })
+
+  let after_balanceof_eos_non_associate_eth_address_d = 0
+  await account_eosevm11111d_eos_non_associate_eth.ERC20BalanceOf().then(balance => {
+    balance = parseFloat(balance) / Math.pow(10, precision)
+    after_balanceof_eos_non_associate_eth_address_d = `${balance} ${symbol}`
+  })
+
+  console.log('------------------------------ ERC20 transfer state change summary ------------------------------')
+  console.log(`ERC20 token transfer from eos_non_associate_eth_address_b to  eos_non_associate_eth_address_c 0.0010 ERC`)
+  console.log(`before ERC20 balanceof_eos_non_associate_eth_address_b: ${before_balanceof_eos_non_associate_eth_address_b}`)
+  console.log(`after ERC20 balanceof_eos_non_associate_eth_address_b: ${after_balanceof_eos_non_associate_eth_address_b}`)
+  console.log(`before ERC20 balanceof_eos_non_associate_eth_address_d: ${before_balanceof_eos_non_associate_eth_address_d}`)
+  console.log(`after ERC20 balanceof_eos_non_associate_eth_address_d: ${after_balanceof_eos_non_associate_eth_address_d}`)
+
   await sleep(1000)
 
-  console.log('------------------------------ Balance of eos_non_associate_eth_address_d ------------------------------')
-  await account_eosevm11111d_eos_non_associate_eth.ERC20BalanceOf().then(res => console.log(res))
-  console.log('----------------------------------------------------------------------------------')
-
-  await sleep(1000)
   console.log('------------------------------ ERC20 token Approve ------------------------------')
   await account_eosevm11111d_eos_non_associate_eth.ERC20Approve(eos_non_associate_eth_address_c, 0.02).then(res => console.log(res))
   console.log('----------------------------------------------------------------------------------')
@@ -194,45 +258,133 @@ async function main () {
   console.log('----------------------------------------------------------------------------------')
   await sleep(1000)
 
-  console.log('------------------------------ ERC20 token transfer from ------------------------------')
+  console.log('------------------------------ ERC20 token transfer from eos_non_associate_eth_address_d to eos_non_associate_eth_address_c ------------------------------')
+
+  before_balanceof_eos_non_associate_eth_address_c = 0
+  await account_eosevm11111c_eos_non_associate_eth.ERC20BalanceOf().then(balance => {
+    balance = parseFloat(balance) / Math.pow(10, precision)
+    before_balanceof_eos_non_associate_eth_address_c = `${balance} ${symbol}`
+  })
+
+  before_balanceof_eos_non_associate_eth_address_d = 0
+  await account_eosevm11111d_eos_non_associate_eth.ERC20BalanceOf().then(balance => {
+    balance = parseFloat(balance) / Math.pow(10, precision)
+    before_balanceof_eos_non_associate_eth_address_d = `${balance} ${symbol}`
+  })
+
   await account_eosevm11111c_eos_non_associate_eth.ERC20TransferFrom(eos_non_associate_eth_address_d,
     eos_non_associate_eth_address_c, 0.002).then(res => console.log(res))
-  console.log('----------------------------------------------------------------------------------')
+
+  after_balanceof_eos_non_associate_eth_address_c = 0
+  await account_eosevm11111c_eos_non_associate_eth.ERC20BalanceOf().then(balance => {
+    balance = parseFloat(balance) / Math.pow(10, precision)
+    after_balanceof_eos_non_associate_eth_address_c = `${balance} ${symbol}`
+  })
+
+  after_balanceof_eos_non_associate_eth_address_d = 0
+  await account_eosevm11111d_eos_non_associate_eth.ERC20BalanceOf().then(balance => {
+    balance = parseFloat(balance) / Math.pow(10, precision)
+    after_balanceof_eos_non_associate_eth_address_d = `${balance} ${symbol}`
+  })
+
+  console.log('------------------------------ ERC20 transfer from state change summary ------------------------------')
+  console.log(`ERC20 token transfer from eos_non_associate_eth_address_d to eos_non_associate_eth_address_c 0.002 ERC`)
+  console.log(`before ERC20 balanceof_eos_non_associate_eth_address_c: ${before_balanceof_eos_non_associate_eth_address_c}`)
+  console.log(`after ERC20 balanceof_eos_non_associate_eth_address_c: ${after_balanceof_eos_non_associate_eth_address_c}`)
+  console.log(`before ERC20 balanceof_eos_non_associate_eth_address_d: ${before_balanceof_eos_non_associate_eth_address_d}`)
+  console.log(`after ERC20 balanceof_eos_non_associate_eth_address_d: ${after_balanceof_eos_non_associate_eth_address_d}`)
+
   await sleep(1000)
 
-  console.log('------------------------------ Balance of eos_non_associate_eth_address_c ------------------------------')
-  await account_eosevm11111c_eos_non_associate_eth.ERC20BalanceOf().then(res => console.log(res))
-  console.log('----------------------------------------------------------------------------------')
+  console.log('------------------------------ deposit ------------------------------')
+  let before_eos_associate_eth_address_b_balance = 0
+  await account_eosevm11111b_eos_associate.getBalance().then((balance) => {
+    before_eos_associate_eth_address_b_balance = `${parseFloat(balance / Math.pow(10, 18)).toString()} ${config.tokenSymbol}`
+  })
 
-  console.log('------------------------------ deposit eos_non_associate_eth_address_c ------------------------------')
+  let before_deposit_balance = 0
+  await rpc.get_currency_balance(config.tokenContract, accountb, config.tokenSymbol).then((balance) => {
+    before_deposit_balance = balance
+  })
   await account_eosevm11111b_eos_associate.deposit('0.0010 SYS').then((res) => console.log(res))
-  console.log('----------------------------------------------------------------------------------')
 
-  console.log('------------------------------ get balance eos_associate_eth_address_b ------------------------------')
-  await account_eosevm11111b_eos_associate.getBalance().then((balance) => console.log(`balance: ${balance}`))
-  console.log('----------------------------------------------------------------------------------')
+  let after_deposit_balance = 0
+  await rpc.get_currency_balance(config.tokenContract, accountb, config.tokenSymbol).then((balance) => {
+    after_deposit_balance = balance
+  })
 
-  console.log('------------------------------ transfer 1 WEI to eos_non_associate_eth_address_c ------------------------------')
+  let after_eos_associate_eth_address_b_balance = 0
+  await account_eosevm11111b_eos_associate.getBalance().then((balance) => {
+    after_eos_associate_eth_address_b_balance = `${parseFloat(balance / Math.pow(10, 18)).toString()} ${config.tokenSymbol}`
+  })
+
+  console.log('------------------------------ deposit state change summary ------------------------------')
+  console.log(`deposit 0.0010 SYS`)
+  console.log(`before deposit get balance eos_associate_eth_address_b: ${before_eos_associate_eth_address_b_balance}`)
+  console.log(`after deposit get balance eos_associate_eth_address_b: ${after_eos_associate_eth_address_b_balance}`)
+  console.log(`before deposit get eosio.token balance accountb: ${before_deposit_balance}`)
+  console.log(`after deposit get eosio.token balance accountb: ${after_deposit_balance}`)
+
+
+  console.log('------------------------------account_eosevm11111b_eos_associate transfer 1 WEI  eos_non_associate_eth_address_c------------------------------')
+  before_eos_associate_eth_address_b_balance = 0
+  await account_eosevm11111b_eos_associate.getBalance().then((balance) => {
+    before_eos_associate_eth_address_b_balance = `${parseFloat(balance / Math.pow(10, 18)).toString()} ${config.tokenSymbol}`
+  })
+
+  let before_eos_non_associate_eth_address_c_balance = 0
+  await account_eosevm11111c_eos_non_associate_eth.getBalance().then((balance) => {
+    before_eos_non_associate_eth_address_c_balance = `${parseFloat(balance / Math.pow(10, 18)).toString()} ${config.tokenSymbol}`
+  })
   await account_eosevm11111b_eos_associate.transfer(eos_non_associate_eth_address_c, 1).then((res) => console.log(res))
-  console.log('-------------------------------------------------------------------------------------')
+
+  after_eos_associate_eth_address_b_balance = 0
+  await account_eosevm11111b_eos_associate.getBalance().then((balance) => {
+    after_eos_associate_eth_address_b_balance = `${parseFloat(balance / Math.pow(10, 18)).toString()} ${config.tokenSymbol}`
+  })
+
+  let after_eos_non_associate_eth_address_c_balance = 0
+  await account_eosevm11111c_eos_non_associate_eth.getBalance().then((balance) => {
+    after_eos_non_associate_eth_address_c_balance = `${parseFloat(balance / Math.pow(10, 18)).toString()} ${config.tokenSymbol}`
+  })
+
+  console.log('------------------------------ transfer state change summary ------------------------------')
+  console.log(`transfer 1 WEI`)
+  console.log(`before transfer get balance eos_associate_eth_address_b: ${before_eos_associate_eth_address_b_balance}`)
+  console.log(`after transfer get balance eos_associate_eth_address_b: ${after_eos_associate_eth_address_b_balance}`)
+  console.log(`before transfer get balance eos_non_associate_eth_address_c: ${before_eos_non_associate_eth_address_c_balance}`)
+  console.log(`after transfer get balance eos_non_associate_eth_address_c: ${after_eos_non_associate_eth_address_c_balance}`)
 
 
-  console.log('------------------------------ after balance transfer  ------------------------------')
-  console.log('------------------------------ get balance eos_associate_eth_address_b ------------------------------')
-  await account_eosevm11111b_eos_associate.getBalance().then((balance) => console.log(`balance: ${balance}`))
-  console.log('----------------------------------------------------------------------------------')
+  console.log('------------------------------ withdraw ------------------------------')
+  let before_withdraw_eos_associate_eth_address_b_balance = 0
+  await account_eosevm11111b_eos_associate.getBalance().then((balance) => {
+    before_withdraw_eos_associate_eth_address_b_balance = `${parseFloat(balance / Math.pow(10, 18)).toString()} ${config.tokenSymbol}`
+  })
 
-  console.log('------------------------------ get balance eos_non_associate_eth_address_c ------------------------------')
-  await account_eosevm11111c_eos_non_associate_eth.getBalance().then((balance) => console.log(`balance: ${balance}`))
-  console.log('----------------------------------------------------------------------------------')
+  let before_withdraw_eosiotoken_accountb_balance = 0
+  await rpc.get_currency_balance(config.tokenContract, accountb, config.tokenSymbol).then((balance) => {
+    before_withdraw_eosiotoken_accountb_balance = balance
+  })
 
-  console.log('------------------------------ withdraw eos_non_associate_eth_address_b ------------------------------')
   await account_eosevm11111b_eos_associate.withdraw('0.0001 SYS').then((res) => console.log(res))
-  console.log('----------------------------------------------------------------------------------')
 
-  console.log('------------------------------ get balance eos_non_associate_eth_address_b ------------------------------')
-  await account_eosevm11111b_eos_associate.getBalance().then((balance) => console.log(`balance: ${balance}`))
-  console.log('----------------------------------------------------------------------------------')
+  let after_withdraw_eos_associate_eth_address_b_balance = 0
+  await account_eosevm11111b_eos_associate.getBalance().then((balance) => {
+    after_withdraw_eos_associate_eth_address_b_balance = `${parseFloat(balance / Math.pow(10, 18)).toString()} ${config.tokenSymbol}`
+  })
+
+  let after_withdraw_eosiotoken_accountb_balance = 0
+  await rpc.get_currency_balance(config.tokenContract, accountb, config.tokenSymbol).then((balance) => {
+    after_withdraw_eosiotoken_accountb_balance = balance
+  })
+
+  console.log('------------------------------ withdraw state change summary ------------------------------')
+  console.log(`withdraw 0.0001 SYS`)
+  console.log(`before transfer get balance eos_associate_eth_address_b: ${before_withdraw_eos_associate_eth_address_b_balance}`)
+  console.log(`after transfer get balance eos_associate_eth_address_b: ${after_withdraw_eos_associate_eth_address_b_balance}`)
+  console.log(`before transfer get balance eos_non_associate_eth_address_c: ${before_withdraw_eosiotoken_accountb_balance}`)
+  console.log(`after transfer get balance eos_non_associate_eth_address_c: ${after_withdraw_eosiotoken_accountb_balance}`)
 }
 
 main()

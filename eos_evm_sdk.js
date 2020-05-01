@@ -530,7 +530,8 @@ class Eos_evm_sdk {
     if (!accountInfo.rows.length) {
       throw new Error(`no such account ${eth_address}`)
     }
-    return `${parseFloat((parseInt(accountInfo.rows[0].balance, 16) / Math.pow(10, 18)).toString())} ${this.config.tokenSymbol}`
+    return parseInt(accountInfo.rows[0].balance, 16)
+    // return `${parseFloat((parseInt(accountInfo.rows[0].balance, 16) / Math.pow(10, 18)).toString())} ${this.config.tokenSymbol}`
   }
 
   /** deployContract
@@ -637,7 +638,7 @@ class Eos_evm_sdk {
       tx.sign(privateKey)
     }
     let serializedTx = await tx.serialize().toString('hex')
-    console.log(`serialized tx: ${serializedTx}`)
+    // console.log(`serialized tx: ${serializedTx}`)
 
     let result
     // send eos transaction
